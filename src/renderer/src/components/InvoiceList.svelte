@@ -14,14 +14,14 @@
   }
 </script>
 
-<div class="bg-white shadow rounded-lg p-6">
+<div class="bg-white shadow-lg rounded-xl p-6">
   <div class="flex justify-between items-center mb-6">
     <h2 class="text-2xl font-semibold">Invoices</h2>
-    <a href="/create-invoice" class="btn">Create New Invoice</a>
+    <a href="/create-invoice" class="btn btn-primary">Create New Invoice</a>
   </div>
 
-  <div class="overflow-x-auto">
-    <table class="min-w-full divide-y divide-gray-200">
+  <div class="table-container">
+    <table class="table">
       <thead class="bg-gray-50">
         <tr>
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -55,10 +55,7 @@
             <td class="px-6 py-4 whitespace-nowrap">{invoice.gstin}</td>
             <td class="px-6 py-4 whitespace-nowrap">₹{invoice.total_amount}</td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <button
-                class="text-blue-600 hover:text-blue-800"
-                onclick={() => viewInvoice(invoice.id)}
-              >
+              <button class="btn btn-secondary text-sm" onclick={() => viewInvoice(invoice.id)}>
                 View
               </button>
             </td>
