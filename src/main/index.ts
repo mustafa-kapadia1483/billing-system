@@ -2,12 +2,12 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { db } from './database'
 
 function createWindow(): void {
-  // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
+    width: 1200,
+    height: 800,
     show: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
@@ -26,8 +26,6 @@ function createWindow(): void {
     return { action: 'deny' }
   })
 
-  // HMR for renderer base on electron-vite cli.
-  // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
   } else {
@@ -35,40 +33,120 @@ function createWindow(): void {
   }
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 
-  // Default open or close DevTools by F12 in development
-  // and ignore CommandOrControl + R in production.
-  // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  // IPC test
-  ipcMain.on('ping', () => console.log('pong'))
+  // Database operations
+  ipcMain.handle('create-company', async (_, company) => {
+    const stmt = db.prepare(
+      'INSERT INTO companies (name, gstin, address_line1, address_line2, city, state) VALUES (?, ?, ?, ?, ?, ?)'
+    )
+    const result = stmt.run(
+      company.name,
+      company.gstin,
+      company.address_line1,
+      company.address_line2,
+      company.city,
+      company.state
+    )
+    return result.lastInsertRowid
+  })
+
+  ipcMain.handle('get-companies', () => {
+    const stmt = db.prepare('SELECT * FROM companies ORDER BY name')
+    return stmt.all()
+  })
+
+  ipcMain.handle('create-invoice', async (_, invoice) => {
+    const { companyId, items, ...invoiceData } = invoice
+
+    const result = db.transaction(() => {
+      const invoiceStmt = db.prepare(`
+        INSERT INTO invoices (
+          invoice_number, date, company_id, total_amount,
+          cgst_amount, sgst_amount, igst_amount, tax_rate
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `)
+
+      const invoiceResult = invoiceStmt.run(
+        invoiceData.invoiceNumber,
+        invoiceData.date,
+        companyId,
+        invoiceData.totalAmount,
+        invoiceData.cgstAmount,
+        invoiceData.sgstAmount,
+        invoiceData.igstAmount,
+        invoiceData.tax_rate
+      )
+
+      const itemStmt = db.prepare(`
+        INSERT INTO invoice_items (
+          invoice_id, description, quantity, rate, amount
+        ) VALUES (?, ?, ?, ?, ?)
+      `)
+
+      for (const item of items) {
+        itemStmt.run(
+          invoiceResult.lastInsertRowid,
+          item.description,
+          item.quantity,
+          item.rate,
+          item.amount
+        )
+      }
+
+      return invoiceResult.lastInsertRowid
+    })()
+
+    return result
+  })
+
+  ipcMain.handle('get-invoices', () => {
+    const stmt = db.prepare(`
+      SELECT i.*, c.name as company_name, c.gstin
+      FROM invoices i
+      JOIN companies c ON i.company_id = c.id
+      ORDER BY i.date DESC
+    `)
+    return stmt.all()
+  })
+
+  ipcMain.handle('get-invoice-details', (_, invoiceId) => {
+    const invoice = db
+      .prepare(
+        `
+      SELECT i.*, c.* 
+      FROM invoices i
+      JOIN companies c ON i.company_id = c.id
+      WHERE i.id = ?
+    `
+      )
+      .get(invoiceId)
+
+    const items = db
+      .prepare(
+        `
+      SELECT * FROM invoice_items WHERE invoice_id = ?
+    `
+      )
+      .all(invoiceId)
+
+    return { invoice, items }
+  })
 
   createWindow()
 
   app.on('activate', function () {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
 })
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
   }
 })
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.

@@ -1,26 +1,35 @@
 <script lang="ts">
-  import Versions from './components/Versions.svelte'
-  import electronLogo from './assets/electron.svg'
+  import { Router, type RouteConfig } from '@mateothegreat/svelte5-router'
+  import Companies from './components/Companies.svelte'
+  import CreateInvoice from './components/CreateInvoice.svelte'
+  import InvoiceList from './components/InvoiceList.svelte'
+  import InvoiceView from './components/InvoiceView.svelte'
 
-  const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
+  // Define routes
+  const routes: RouteConfig = [
+    { path: '/', component: InvoiceList },
+    { path: '/companies', component: Companies },
+    { path: '/create-invoice', component: CreateInvoice },
+    { path: '/invoices', component: InvoiceList },
+    { path: '/invoice/(?<id>.*)', component: InvoiceView }
+  ]
 </script>
 
-<img alt="logo" class="logo" src={electronLogo} />
-<div class="creator">Powered by electron-vite</div>
-<div class="text">
-  Build an Electron app with
-  <span class="svelte">Svelte</span>
-  and
-  <span class="ts">TypeScript</span>
+<div class="min-h-screen bg-gray-100">
+  <nav class="bg-white shadow-lg print:hidden">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex justify-between h-16">
+        <div class="flex space-x-4 items-center">
+          <a href="/" class="text-xl font-bold text-gray-800">Billing System</a>
+          <a href="/companies" class="text-gray-600 hover:text-gray-800">Companies</a>
+          <a href="/create-invoice" class="text-gray-600 hover:text-gray-800">Create Invoice</a>
+          <a href="/invoices" class="text-gray-600 hover:text-gray-800">Invoices</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto py-6 px-4">
+    <Router {routes} />
+  </main>
 </div>
-<p class="tip">Please try pressing <code>F12</code> to open the devTool</p>
-<div class="actions">
-  <div class="action">
-    <a href="https://electron-vite.org/" target="_blank" rel="noreferrer">Documentation</a>
-  </div>
-  <div class="action">
-    <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions a11y-missing-attribute-->
-    <a target="_blank" rel="noreferrer" on:click={ipcHandle}>Send IPC</a>
-  </div>
-</div>
-<Versions />
