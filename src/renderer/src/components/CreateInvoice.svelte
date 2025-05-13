@@ -5,7 +5,7 @@
   let companies = $state([])
   let selectedCompany = $state(null)
   let selectedCompanyData = $state(null)
-  let items = $state([{ description: '', quantity: 1, rate: 0, amount: 0 }])
+  let items = $state([{ description: '', hsn_code: '', quantity: 1, rate: 0, amount: 0 }])
   let invoiceNumber = $state('')
   let invoiceDate = $state(new Date().toISOString().split('T')[0])
   let selectedTaxRate = $state(18) // Default to 18%
@@ -32,7 +32,7 @@
   }
 
   function addItem() {
-    items = [...items, { description: '', quantity: 1, rate: 0, amount: 0 }]
+    items = [...items, { description: '', hsn_code: '', quantity: 1, rate: 0, amount: 0 }]
   }
 
   function removeItem(index: number) {
@@ -148,13 +148,22 @@
         <div
           class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end bg-gray-50 p-4 rounded-lg border border-gray-200"
         >
-          <div class="md:col-span-5">
+          <div class="md:col-span-4">
             <label class="block text-sm font-semibold text-gray-800 mb-1.5">Description</label>
             <input
               type="text"
               bind:value={item.description}
               class="input w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
               required
+            />
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-sm font-semibold text-gray-800 mb-1.5">HSN/SAC</label>
+            <input
+              type="text"
+              bind:value={item.hsn_code}
+              class="input w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
+              placeholder="e.g. 8471"
             />
           </div>
           <div class="md:col-span-2">

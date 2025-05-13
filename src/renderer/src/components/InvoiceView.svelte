@@ -2,6 +2,7 @@
   import { onMount } from 'svelte'
   import { formatter } from './../utils/formatting'
   import html2pdf from 'html2pdf.js'
+  import { ToWords } from 'to-words'
 
   let { route } = $props()
   let invoiceData = $state(null)
@@ -45,206 +46,388 @@
         buttons.forEach((button) => (button.style.display = ''))
       })
   }
+
+  const toWords = new ToWords({
+    localeCode: 'en-IN',
+    converterOptions: {
+      currency: true,
+      ignoreDecimal: false,
+      ignoreZeroCurrency: false,
+      doNotAddOnly: false,
+      currencyOptions: {
+        // can be used to override defaults for the selected locale
+        name: 'Rupee',
+        plural: 'Rupees',
+        symbol: '₹',
+        fractionalUnit: {
+          name: 'Paisa',
+          plural: 'Paise',
+          symbol: ''
+        }
+      }
+    }
+  })
+
+  const sellerDetails = {
+    name: 'TAHERALLYS & CO',
+    address_line1: '26/28 Mutton Street, Near JJ Hospital, Mumbai - 400003',
+    address_line2: '165 Tulsi Pipe road, Kohinoor Estate, Lower Parel - 400013',
+    gstin: '27ATQPJ9644J1ZW',
+    city: 'Mumbai',
+    state: 'Maharashtra',
+
+    bankDetails: {
+      name: ': KOTAK MAHINDRA BANK',
+      account_name: 'Taherallys & Co',
+      account_number: '2521030824',
+      ifsc_code: 'KKBK0001403'
+    }
+  }
 </script>
 
+<div class="flex justify-center gap-4 mb-4 print:hidden">
+  <button
+    class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 action-button"
+    on:click={downloadPDF}
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+      <path
+        fill-rule="evenodd"
+        d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+        clip-rule="evenodd"
+      />
+    </svg>
+    Download PDF
+  </button>
+  <button
+    class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 action-button"
+    on:click={printInvoice}
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+      <path
+        fill-rule="evenodd"
+        d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z"
+        clip-rule="evenodd"
+      />
+    </svg>
+    Print
+  </button>
+</div>
 {#if invoiceData}
   <div
     id="invoice-content"
-    class="bg-white shadow-lg rounded-lg p-8 print:shadow-none max-w-4xl mx-auto"
+    class="bg-white p-8 print:p-0 print:shadow-none max-w-5xl mx-auto text-sm"
   >
-    <div class="flex justify-between items-start mb-12">
-      <h1 class="text-3xl font-bold text-gray-800">TAX INVOICE</h1>
-      <div class="text-right space-y-2">
-        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
-          <p class="text-gray-600 text-sm">
-            Invoice No: <span class="text-gray-800 font-semibold ml-2"
-              >{invoiceData.invoice.invoice_number}</span
-            >
-          </p>
-          <p class="text-gray-600 text-sm mt-1">
-            Date: <span class="text-gray-800 font-semibold ml-2"
-              >{new Date(invoiceData.invoice.date).toLocaleDateString()}</span
-            >
-          </p>
-        </div>
-        <div class="flex gap-3 justify-end">
-          <button
-            class="btn bg-gray-100 hover:bg-gray-200 text-gray-700 print:hidden action-button px-4 py-2 rounded-lg transition-colors text-sm font-medium"
-            onclick={printInvoice}
-          >
-            <span class="flex items-center gap-2">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
-                />
-              </svg>
-              Print
-            </span>
-          </button>
-          <button
-            class="btn bg-blue-600 hover:bg-blue-700 text-white print:hidden action-button px-4 py-2 rounded-lg transition-colors text-sm font-medium"
-            onclick={downloadPDF}
-          >
-            <span class="flex items-center gap-2">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                />
-              </svg>
-              Download PDF
-            </span>
-          </button>
-        </div>
-      </div>
-    </div>
+    <h1 class="text-xl font-bold text-center mb-4">Tax Invoice</h1>
 
-    <div class="grid grid-cols-2 gap-12 mb-12">
-      <div class="border-l-4 border-blue-600 pl-4 bg-gray-50 rounded-r-lg p-4">
-        <h2 class="text-lg font-semibold mb-3 text-gray-800 flex items-center gap-2">
-          <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-            />
-          </svg>
-          From
-        </h2>
-        <div class="space-y-2">
-          <p class="font-bold text-gray-800 text-lg">TAHERALLYS & CO</p>
-          <p class="text-gray-600 leading-relaxed">
-            26/28 Mutton Street, Near JJ Hospital,<br />
-            Mumbai - 400003<br />
-            165 Tulsi Pipe road, Kohinoor Estate,<br />
-            Lower Parel - 400013
-          </p>
-          <p class="font-medium text-gray-700 mt-2 flex items-center gap-2">
-            <span class="text-sm text-gray-500">GSTIN:</span>
-            <span class="font-mono">27ATQPJ9644J1ZW</span>
-          </p>
-        </div>
-      </div>
-      <div class="border-l-4 border-gray-300 pl-4 bg-gray-50 rounded-r-lg p-4">
-        <h2 class="text-lg font-semibold mb-3 text-gray-800 flex items-center gap-2">
-          <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-            />
-          </svg>
-          Bill To
-        </h2>
-        <div class="space-y-2">
-          <p class="font-bold text-gray-800 text-lg">{invoiceData.invoice.name}</p>
-          <p class="text-gray-600 leading-relaxed">
-            {invoiceData.invoice.address_line1}
-            {#if invoiceData.invoice.address_line2}
-              <br />{invoiceData.invoice.address_line2}
+    <div class="grid grid-cols-2 gap-4 mb-4">
+      <div class="border border-gray-300">
+        <div class="border-b p-3">
+          <p class="font-bold mb-1">{sellerDetails.name}</p>
+          <p class="text-xs leading-relaxed">
+            {sellerDetails.address_line1}<br />
+            {#if sellerDetails.address_line2}
+              {sellerDetails.address_line2}<br />
             {/if}
-            <br />{invoiceData.invoice.city}, {invoiceData.invoice.state}
+            {sellerDetails.city}<br />
+            GSTIN/UIN: {sellerDetails.gstin}<br />
+            State Name: {sellerDetails.state}
           </p>
-          <p class="font-medium text-gray-700 mt-2 flex items-center gap-2">
-            <span class="text-sm text-gray-500">GSTIN:</span>
-            <span class="font-mono">{invoiceData.invoice.gstin}</span>
+        </div>
+        <div class=" p-3 mb-6 h-max">
+          <p class="font-semibold mb-2">Buyer (Bill to)</p>
+          <p class="font-bold">{invoiceData.invoice.name}</p>
+          <p class="text-xs leading-relaxed">
+            {invoiceData.invoice.address_line1}<br />
+            {#if invoiceData.invoice.address_line2}
+              {invoiceData.invoice.address_line2}<br />
+            {/if}
+            {invoiceData.invoice.city}<br />
+            GSTIN/UIN: {invoiceData.invoice.gstin}<br />
+            State Name: {invoiceData.invoice.state}
           </p>
         </div>
       </div>
-    </div>
 
-    <div class="mb-12 overflow-hidden rounded-lg border border-gray-200">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
-          <tr>
-            <th
-              class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider w-1/2"
-              >Description</th
-            >
-            <th
-              class="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider"
-              >Quantity</th
-            >
-            <th
-              class="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider"
-              >Rate</th
-            >
-            <th
-              class="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider"
-              >Amount</th
-            >
+      <table class="border border-gray-300 border-collapse w-full h-full text-xs">
+        <tbody class="divide-y divide-gray-300">
+          <tr class="h-[52px]">
+            <td class="border-r border-gray-300 p-2 align-top">
+              <p class="font-medium text-gray-700">Invoice No.</p>
+              <p class="mt-1">{invoiceData.invoice.invoice_number}</p>
+            </td>
+            <td class="p-1 align-top">
+              <p class="font-medium text-gray-700">Dated</p>
+              <p class="mt-1">{new Date(invoiceData.invoice.date).toLocaleDateString('en-IN')}</p>
+            </td>
           </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
-          {#each invoiceData.items as item}
-            <tr class="hover:bg-gray-50 transition-colors">
-              <td class="px-6 py-4 text-sm text-gray-800">{item.description}</td>
-              <td class="px-6 py-4 text-sm text-gray-600 text-right">{item.quantity}</td>
-              <td class="px-6 py-4 text-sm text-gray-600 text-right"
-                >{formatter.format(item.rate)}</td
-              >
-              <td class="px-6 py-4 text-sm text-gray-800 text-right font-medium"
-                >{formatter.format(item.amount)}</td
-              >
-            </tr>
-          {/each}
+          <tr class="h-[52px]">
+            <td class="border-r border-gray-300 p-2 align-top">
+              <p class="font-medium text-gray-700">Delivery Note</p>
+              <p class="mt-1">{invoiceData.invoice.delivery_note || ''}</p>
+            </td>
+            <td class="p-1 align-top">
+              <p class="font-medium text-gray-700">Mode/Terms of Payment</p>
+              <p class="mt-1">{invoiceData.invoice.payment_terms || ''}</p>
+            </td>
+          </tr>
+          <tr class="h-[52px]">
+            <td class="border-r border-gray-300 p-2 align-top">
+              <p class="font-medium text-gray-700">Reference No. & Date</p>
+              <p class="mt-1">{invoiceData.invoice.reference_no || ''}</p>
+            </td>
+            <td class="p-1 align-top">
+              <p class="font-medium text-gray-700">Other References</p>
+              <p class="mt-1">{invoiceData.invoice.other_ref || ''}</p>
+            </td>
+          </tr>
+          <tr class="h-[52px]">
+            <td class="border-r border-gray-300 p-2 align-top">
+              <p class="font-medium text-gray-700">Buyer's Order No.</p>
+              <p class="mt-1">{invoiceData.invoice.buyer_order_no || ''}</p>
+            </td>
+            <td class="p-1 align-top">
+              <p class="font-medium text-gray-700">Dated</p>
+              <p class="mt-1">{invoiceData.invoice.buyer_order_date || ''}</p>
+            </td>
+          </tr>
+          <tr class="h-[52px]">
+            <td class="border-r border-gray-300 p-2 align-top">
+              <p class="font-medium text-gray-700">Dispatch Doc No.</p>
+              <p class="mt-1">{invoiceData.invoice.dispatch_doc_no || ''}</p>
+            </td>
+            <td class="p-1 align-top">
+              <p class="font-medium text-gray-700">Delivery Note Date</p>
+              <p class="mt-1">{invoiceData.invoice.delivery_note_date || ''}</p>
+            </td>
+          </tr>
+          <tr class="h-[52px]">
+            <td class="border-r border-gray-300 p-2 align-top">
+              <p class="font-medium text-gray-700">Dispatched through</p>
+              <p class="mt-1">{invoiceData.invoice.dispatched_through || ''}</p>
+            </td>
+            <td class="p-1 align-top">
+              <p class="font-medium text-gray-700">Destination</p>
+              <p class="mt-1">{invoiceData.invoice.destination || ''}</p>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" class="p-1 align-top">
+              <p class="font-medium text-gray-700">Terms of Delivery</p>
+              <p class="mt-1">
+                {invoiceData.invoice.terms_of_delivery || 'Goods once sold will not be taken back'}
+              </p>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
 
-    <div class="flex justify-end">
-      <div class="w-80 space-y-3">
-        <div class="flex justify-between items-center py-3 border-b border-gray-200">
-          <span class="text-gray-600">Subtotal</span>
-          <span class="text-gray-800 font-medium"
-            >{formatter.format(invoiceData.invoice.total_amount)}</span
-          >
-        </div>
-        {#if invoiceData.invoice.state === 'Maharashtra'}
-          <div class="flex justify-between items-center py-3 border-b border-gray-200">
-            <span class="text-gray-600">CGST ({invoiceData.invoice.tax_rate / 2}%)</span>
-            <span class="text-gray-800 font-medium"
-              >{formatter.format(invoiceData.invoice.cgst_amount)}</span
+    <table class="w-full border border-gray-300 text-xs mb-4">
+      <thead>
+        <tr class="border-b border-gray-300">
+          <th class="border-r border-gray-300 p-2 text-left">SI No.</th>
+          <th class="border-r border-gray-300 p-2 text-left">Description of Goods</th>
+          <th class="border-r border-gray-300 p-2 text-center">HSN/SAC</th>
+          <th class="border-r border-gray-300 p-2 text-center">Quantity</th>
+          <th class="border-r border-gray-300 p-2 text-right">Rate</th>
+          <th class="border-r border-gray-300 p-2 text-center">per</th>
+          <th class="border-r border-gray-300 p-2 text-center">Disc. %</th>
+          <th class="p-1 text-right">Amount</th>
+        </tr>
+      </thead>
+      <tbody class="border-gray-300">
+        {#each invoiceData.items as item, index}
+          <tr class="border-b border-gray-300">
+            <td class="border-r border-gray-300 p-2">{index + 1}</td>
+            <td class="border-r border-gray-300 p-2">{item.description}</td>
+            <td class="border-r border-gray-300 p-2 text-center">{item.hsn_code || ''}</td>
+            <td class="border-r border-gray-300 p-2 text-center">{item.quantity} No</td>
+            <td class="border-r border-gray-300 p-2 text-right">{item.rate.toFixed(2)}</td>
+            <td class="border-r border-gray-300 p-2 text-center">No</td>
+            <td class="border-r border-gray-300 p-2 text-center">-</td>
+            <td class="p-1 text-right">{item.amount.toFixed(2)}</td>
+          </tr>
+        {/each}
+        {#if invoiceData.invoice?.state === 'Maharashtra'}
+          <tr class="border-b border-gray-300">
+            <td class="border-r border-gray-300"></td>
+            <td class="p-1 border-r border-gray-300 text-right">CGST</td>
+            {#each Array.from({ length: 5 }) as _}
+              <td class="border-r border-gray-300"></td>
+            {/each}
+            <td class="p-1 border-r border-gray-300 text-right"
+              >{(
+                invoiceData.invoice.total_amount *
+                (invoiceData.invoice.tax_rate / 2 / 100)
+              ).toFixed(2)}</td
             >
-          </div>
-          <div class="flex justify-between items-center py-3 border-b border-gray-200">
-            <span class="text-gray-600">SGST ({invoiceData.invoice.tax_rate / 2}%)</span>
-            <span class="text-gray-800 font-medium"
-              >{formatter.format(invoiceData.invoice.sgst_amount)}</span
+          </tr>
+          <tr class="border-b border-gray-300">
+            <td class="border-r border-gray-300"></td>
+            <td class="p-1 border-r border-gray-300 text-right">SGST</td>
+            {#each Array.from({ length: 5 }) as _}
+              <td class="border-r border-gray-300"></td>
+            {/each}
+            <td class="p-1 border-r border-gray-300 text-right"
+              >{(
+                invoiceData.invoice.total_amount *
+                (invoiceData.invoice.tax_rate / 2 / 100)
+              ).toFixed(2)}</td
             >
-          </div>
+          </tr>
         {:else}
-          <div class="flex justify-between items-center py-3 border-b border-gray-200">
-            <span class="text-gray-600">IGST ({invoiceData.invoice.tax_rate}%)</span>
-            <span class="text-gray-800 font-medium"
-              >{formatter.format(invoiceData.invoice.igst_amount)}</span
-            >
-          </div>
+          <tr class="border-b border-gray-300">
+            <td class="border-r border-gray-300"></td>
+            <td class="p-1 border-r border-gray-300 text-right">IGST</td>
+            {#each Array.from({ length: 5 }) as _}
+              <td class="border-r border-gray-300"></td>
+            {/each}
+
+            <td class="p-1 border-r border-gray-300 text-right"
+              >{(invoiceData.invoice.total_amount * (invoiceData.invoice.tax_rate / 100)).toFixed(
+                2
+              )}
+            </td>
+          </tr>
         {/if}
-        <div class="flex justify-between items-center py-4 border-t-2 border-gray-800">
-          <span class="text-gray-800 font-bold text-lg">Total</span>
-          <span class="text-gray-800 font-bold text-lg">
-            {formatter.format(
-              parseFloat(
-                (
-                  parseFloat(invoiceData.invoice.total_amount) +
-                  parseFloat(invoiceData.invoice.cgst_amount) +
-                  parseFloat(invoiceData.invoice.sgst_amount) +
-                  parseFloat(invoiceData.invoice.igst_amount)
-                ).toFixed(2)
-              )
-            )}
-          </span>
+        <tr class="border-b border-gray-300">
+          <td colspan="7" class="border-r border-gray-300 p-2 text-right font-semibold">Total</td>
+          <td class="p-1 text-right font-semibold"
+            >{formatter.format(
+              invoiceData.invoice.total_amount +
+                invoiceData.invoice.total_amount * (invoiceData.invoice.tax_rate / 100)
+            )}</td
+          >
+        </tr>
+        <tr class="border-b border-gray-300">
+          <td colspan="7" class="border-r border-gray-300 p-2 text-left">
+            <div class="flex gap-2">
+              <p class="font-semibold mb-2">Amount Chargeable (in words):</p>
+              <p>{toWords.convert(invoiceData.invoice.total_amount)}</p>
+            </div>
+          </td>
+          <td class="p-1 text-right font-semibold"> E. & O.E </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="grid grid-cols-1 gap-4 mb-4">
+      <div class="border border-gray-300">
+        <table class="w-full text-xs">
+          <thead>
+            <tr class="border-b border-gray-300">
+              <th class="p-1 border-r border-gray-300">HSN/SAC</th>
+              <th class="p-1 border-r border-gray-300">Taxable Value</th>
+              {#if invoiceData.invoice?.state === 'Maharashtra'}
+                <th colspan="2" class="p-1 border-r border-gray-300 text-center">CGST</th>
+                <th colspan="2" class="p-1 border-r border-gray-300 text-center">SGST/UTGST</th>
+              {:else}
+                <th colspan="2" class="p-1 border-r border-gray-300 text-center">IGST</th>
+              {/if}
+              <th class="p-1">Total Tax Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            {#each invoiceData.items as item}
+              <tr class="border-b border-gray-300">
+                <td class="p-1 border-r border-gray-300">{item.hsn_code || ''}</td>
+                <td class="p-1 border-r border-gray-300 text-right">{item.amount.toFixed(2)}</td>
+                {#if invoiceData.invoice?.state === 'Maharashtra'}
+                  <td class="p-1 border-r border-gray-300 text-center"
+                    >{invoiceData.invoice.tax_rate / 2}%</td
+                  >
+                  <td class="p-1 border-r border-gray-300 text-right"
+                    >{(item.amount * (invoiceData.invoice.tax_rate / 200)).toFixed(2)}</td
+                  >
+                  <td class="p-1 border-r border-gray-300 text-center"
+                    >{invoiceData.invoice.tax_rate / 2}%</td
+                  >
+                  <td class="p-1 border-r border-gray-300 text-right"
+                    >{(item.amount * (invoiceData.invoice.tax_rate / 200)).toFixed(2)}</td
+                  >
+                {:else}
+                  <td class="p-1 border-r border-gray-300 text-center"
+                    >{invoiceData.invoice.tax_rate}%</td
+                  >
+                  <td class="p-1 border-r border-gray-300 text-right"
+                    >{(item.amount * (invoiceData.invoice.tax_rate / 100)).toFixed(2)}</td
+                  >
+                {/if}
+                <td class="p-1 border-r border-gray-300 text-right"
+                  >{(item.amount * (invoiceData.invoice.tax_rate / 100)).toFixed(2)}</td
+                >
+              </tr>
+            {/each}
+            <tr class="border-b border-gray-300">
+              <td class="p-1 border-r border-gray-300 text-right font-semibold"> Total </td>
+              <td class="p-1 border-r border-gray-300 text-right font-semibold"
+                >{formatter.format(invoiceData.invoice.total_amount)}</td
+              >
+              {#if invoiceData.invoice?.state === 'Maharashtra'}
+                <td class="border-r"></td>
+                <td class="p-1 border-r border-gray-300 text-right font-semibold"
+                  >{formatter.format(
+                    invoiceData.invoice.total_amount * (invoiceData.invoice.tax_rate / 2 / 100)
+                  )}
+                </td>
+                <td class="border-r"></td>
+                <td class="p-1 border-r border-gray-300 text-right font-semibold"
+                  >{formatter.format(
+                    invoiceData.invoice.total_amount * (invoiceData.invoice.tax_rate / 2 / 100)
+                  )}
+                </td>
+              {:else}
+                <td class="border-r"></td>
+                <td class="p-1 border-r border-gray-300 text-right font-semibold"
+                  >{formatter.format(
+                    invoiceData.invoice.total_amount * (invoiceData.invoice.tax_rate / 100)
+                  )}</td
+                >
+              {/if}
+              <td class="p-1 border-r border-gray-300 text-right font-semibold"
+                >{formatter.format(
+                  invoiceData.invoice.total_amount * (invoiceData.invoice.tax_rate / 100)
+                )}</td
+              >
+            </tr>
+            <tr>
+              <td colspan="5" class="border-r border-gray-300 p-1 text-left">
+                <div class="flex gap-2">
+                  <p class="font-semibold mb-2">Tax Amount (in words):</p>
+                  <p>{toWords.convert(invoiceData.invoice.total_amount)}</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="border border-gray-300 p-3 text-xs">
+      <div class="grid grid-cols-2">
+        <div>
+          <p class="font-semibold mb-2">Declaration</p>
+          <p>Goods once sold will not be taken back</p>
+          <p>
+            I/we hereby certify that my/our Registration Certificate under the GST Act, 2017 is in
+            force on the date on which the sale of the goods Sepcified in this Tax Invoice is made
+            by me/us and that the transacton of sale Covered by this Tax Invoice has - been effected
+            by me/us and it shall be accounted
+          </p>
+          <p>
+            For in the turnover of sale whicle filling of return and the due tax, if any payable on
+            the sale has been paid or shall be paid"
+          </p>
+        </div>
+        <div class="flex flex-col justify-between items-end">
+          <p class="font-semibold">for {sellerDetails.name}</p>
+          <p class="mt-8">Authorised Signatory</p>
         </div>
       </div>
     </div>
+
+    <p class="text-center text-xs mt-2">This is a Computer Generated Invoice</p>
   </div>
 {/if}
 

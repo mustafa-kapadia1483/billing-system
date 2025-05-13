@@ -85,14 +85,15 @@ app.whenReady().then(() => {
 
       const itemStmt = db.prepare(`
         INSERT INTO invoice_items (
-          invoice_id, description, quantity, rate, amount
-        ) VALUES (?, ?, ?, ?, ?)
+          invoice_id, hsn_code, description, quantity, rate, amount
+        ) VALUES (?, ?, ?, ?, ?, ?)
       `)
 
       for (const item of items) {
         itemStmt.run(
           invoiceResult.lastInsertRowid,
           item.description,
+          item.hsn_code,
           item.quantity,
           item.rate,
           item.amount

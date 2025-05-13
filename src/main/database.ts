@@ -37,6 +37,7 @@ db.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     invoice_id INTEGER NOT NULL,
     description TEXT NOT NULL,
+    hsn_code TEXT,
     quantity INTEGER NOT NULL,
     rate DECIMAL(10,2) NOT NULL,
     amount DECIMAL(10,2) NOT NULL,
