@@ -100,7 +100,7 @@
     Download PDF
   </button>
   <button
-    class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 action-button"
+    class="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 action-button"
     on:click={printInvoice}
   >
     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
@@ -153,67 +153,67 @@
         <tbody class="divide-y divide-gray-300">
           <tr class="h-[52px]">
             <td class="border-r border-gray-300 p-2 align-top">
-              <p class="font-medium text-gray-700">Invoice No.</p>
+              <p class="font-medium">Invoice No.</p>
               <p class="mt-1">{invoiceData.invoice.invoice_number}</p>
             </td>
             <td class="p-1 align-top">
-              <p class="font-medium text-gray-700">Dated</p>
+              <p class="font-medium">Dated</p>
               <p class="mt-1">{new Date(invoiceData.invoice.date).toLocaleDateString('en-IN')}</p>
             </td>
           </tr>
           <tr class="h-[52px]">
             <td class="border-r border-gray-300 p-2 align-top">
-              <p class="font-medium text-gray-700">Delivery Note</p>
+              <p class="font-medium">Delivery Note</p>
               <p class="mt-1">{invoiceData.invoice.delivery_note || ''}</p>
             </td>
             <td class="p-1 align-top">
-              <p class="font-medium text-gray-700">Mode/Terms of Payment</p>
+              <p class="font-medium">Mode/Terms of Payment</p>
               <p class="mt-1">{invoiceData.invoice.payment_terms || ''}</p>
             </td>
           </tr>
           <tr class="h-[52px]">
             <td class="border-r border-gray-300 p-2 align-top">
-              <p class="font-medium text-gray-700">Reference No. & Date</p>
+              <p class="font-medium">Reference No. & Date</p>
               <p class="mt-1">{invoiceData.invoice.reference_no || ''}</p>
             </td>
             <td class="p-1 align-top">
-              <p class="font-medium text-gray-700">Other References</p>
+              <p class="font-medium">Other References</p>
               <p class="mt-1">{invoiceData.invoice.other_ref || ''}</p>
             </td>
           </tr>
           <tr class="h-[52px]">
             <td class="border-r border-gray-300 p-2 align-top">
-              <p class="font-medium text-gray-700">Buyer's Order No.</p>
+              <p class="font-medium">Buyer's Order No.</p>
               <p class="mt-1">{invoiceData.invoice.buyer_order_no || ''}</p>
             </td>
             <td class="p-1 align-top">
-              <p class="font-medium text-gray-700">Dated</p>
+              <p class="font-medium">Dated</p>
               <p class="mt-1">{invoiceData.invoice.buyer_order_date || ''}</p>
             </td>
           </tr>
           <tr class="h-[52px]">
             <td class="border-r border-gray-300 p-2 align-top">
-              <p class="font-medium text-gray-700">Dispatch Doc No.</p>
+              <p class="font-medium">Dispatch Doc No.</p>
               <p class="mt-1">{invoiceData.invoice.dispatch_doc_no || ''}</p>
             </td>
             <td class="p-1 align-top">
-              <p class="font-medium text-gray-700">Delivery Note Date</p>
+              <p class="font-medium">Delivery Note Date</p>
               <p class="mt-1">{invoiceData.invoice.delivery_note_date || ''}</p>
             </td>
           </tr>
           <tr class="h-[52px]">
             <td class="border-r border-gray-300 p-2 align-top">
-              <p class="font-medium text-gray-700">Dispatched through</p>
+              <p class="font-medium">Dispatched through</p>
               <p class="mt-1">{invoiceData.invoice.dispatched_through || ''}</p>
             </td>
             <td class="p-1 align-top">
-              <p class="font-medium text-gray-700">Destination</p>
+              <p class="font-medium">Destination</p>
               <p class="mt-1">{invoiceData.invoice.destination || ''}</p>
             </td>
           </tr>
           <tr>
             <td colspan="2" class="p-1 align-top">
-              <p class="font-medium text-gray-700">Terms of Delivery</p>
+              <p class="font-medium">Terms of Delivery</p>
               <p class="mt-1">
                 {invoiceData.invoice.terms_of_delivery || 'Goods once sold will not be taken back'}
               </p>

@@ -2,15 +2,24 @@
   import { onMount } from 'svelte'
   import { goto } from '@mateothegreat/svelte5-router'
 
-  let invoices = []
-
+  let invoices = $state([])
+  $inspect(invoices)
   onMount(async () => {
-    invoices = await window.api.getInvoices()
+    loadInvoices()
   })
+
+  async function loadInvoices() {
+    invoices = await window.api.getInvoices()
+  }
 
   function viewInvoice(id: number) {
     console.log('Viewing invoice with ID:', id)
     goto(`/invoice/${id}`)
+  }
+
+  async function deleteInvoice(id: number) {
+    await window.api.deleteInvoice(id)
+    await loadInvoices()
   }
 </script>
 
@@ -54,9 +63,15 @@
             <td class="px-6 py-4 whitespace-nowrap">{invoice.company_name}</td>
             <td class="px-6 py-4 whitespace-nowrap">{invoice.gstin}</td>
             <td class="px-6 py-4 whitespace-nowrap">₹{invoice.total_amount}</td>
-            <td class="px-6 py-4 whitespace-nowrap">
+            <td class="px-6 py-4 whitespace-nowrap space-x-2">
               <button class="btn btn-secondary text-sm" onclick={() => viewInvoice(invoice.id)}>
                 View
+              </button>
+              <button
+                class="btn btn-danger text-sm bg-red-50 hover:bg-red-100 text-red-600 rounded transition-colors"
+                onclick={() => deleteInvoice(invoice.id)}
+              >
+                Delete
               </button>
             </td>
           </tr>

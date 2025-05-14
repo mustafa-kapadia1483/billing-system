@@ -118,8 +118,11 @@
           class="input w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors appearance-none"
           required
         >
-          <option value={18}>18%</option>
+          <option value={3}>3%</option>
           <option value={5}>5%</option>
+          <option value={12}>12%</option>
+          <option value={18}>18%</option>
+          <option value={28}>28%</option>
         </select>
       </div>
     </div>
