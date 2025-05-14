@@ -8,6 +8,11 @@ An Electron application with Svelte and TypeScript
 
 ## Project Setup
 
+### Configure Seller Details
+
+1. Copy `src/renderer/src/config/seller-example.json` to `src/renderer/src/config/seller.json`
+2. Edit `seller.json` with your company details
+
 ### Install
 
 ```bash

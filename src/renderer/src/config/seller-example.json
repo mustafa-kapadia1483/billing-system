@@ -1,0 +1,14 @@
+{
+  "name": "",
+  "address_line1": "",
+  "address_line2": "",
+  "gstin": "",
+  "city": "",
+  "state": "",
+  "bankDetails": {
+    "name": "",
+    "account_name": "",
+    "account_number": "",
+    "ifsc_code": ""
+  }
+}

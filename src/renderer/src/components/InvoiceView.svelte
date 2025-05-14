@@ -3,6 +3,7 @@
   import { formatter } from './../utils/formatting'
   import html2pdf from 'html2pdf.js'
   import { ToWords } from 'to-words'
+  import sellerDetails from '../config/seller.json'
 
   let { route } = $props()
   let invoiceData = $state(null)
@@ -67,22 +68,6 @@
       }
     }
   })
-
-  const sellerDetails = {
-    name: 'TAHERALLYS & CO',
-    address_line1: '26/28 Mutton Street, Near JJ Hospital, Mumbai - 400003',
-    address_line2: '165 Tulsi Pipe road, Kohinoor Estate, Lower Parel - 400013',
-    gstin: '27ATQPJ9644J1ZW',
-    city: 'Mumbai',
-    state: 'Maharashtra',
-
-    bankDetails: {
-      name: ': KOTAK MAHINDRA BANK',
-      account_name: 'Taherallys & Co',
-      account_number: '2521030824',
-      ifsc_code: 'KKBK0001403'
-    }
-  }
 
   let totalTaxAmount = $derived(
     invoiceData.items?.reduce(
@@ -265,7 +250,7 @@
             <td class="p-1 text-right">{item.amount.toFixed(2)}</td>
           </tr>
         {/each}
-        {#if invoiceData.invoice?.state === 'Maharashtra'}
+        {#if invoiceData.invoice?.state === sellerDetails.state}
           <tr class="border-b border-gray-300 bg-gray-50">
             <td class="border-r border-gray-300"></td>
             <td class="p-1 border-r border-gray-300 text-right">CGST</td>
@@ -336,7 +321,7 @@
             <tr class="border-b border-gray-300">
               <th class="p-1 border-r border-gray-300">HSN/SAC</th>
               <th class="p-1 border-r border-gray-300">Taxable Value</th>
-              {#if invoiceData.invoice?.state === 'Maharashtra'}
+              {#if invoiceData.invoice?.state === sellerDetails.state}
                 <th colspan="2" class="p-1 border-r border-gray-300 text-center">CGST</th>
                 <th colspan="2" class="p-1 border-r border-gray-300 text-center">SGST/UTGST</th>
               {:else}
@@ -348,9 +333,9 @@
           <tbody>
             {#each invoiceData.items as item}
               <tr class="border-b border-gray-300">
-                <td class="p-1 border-r border-gray-300">{item.hsn_code || ''}</td>
+                <td class="p-1 border-r border-gray-300 text-center">{item.hsn_code || ''}</td>
                 <td class="p-1 border-r border-gray-300 text-right">{item.amount.toFixed(2)}</td>
-                {#if invoiceData.invoice?.state === 'Maharashtra'}
+                {#if invoiceData.invoice?.state === sellerDetails.state}
                   <td class="p-1 border-r border-gray-300 text-center">{item.tax_rate / 2}%</td>
                   <td class="p-1 border-r border-gray-300 text-right"
                     >{item.cgst_amount.toFixed(2)}</td
@@ -374,7 +359,7 @@
               <td class="p-1 border-r border-gray-300 text-right font-semibold"
                 >{formatter.format(invoiceData.invoice.total_amount)}</td
               >
-              {#if invoiceData.invoice?.state === 'Maharashtra'}
+              {#if invoiceData.invoice?.state === sellerDetails.state}
                 <td class="border-r"></td>
                 <td class="p-1 border-r border-gray-300 text-right font-semibold"
                   >{formatter.format(totalCgstAmount)}

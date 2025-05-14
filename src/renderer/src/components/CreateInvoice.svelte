@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { formatter } from './../utils/formatting'
+  import sellerDetails from '../config/seller.json'
 
   let companies = $state([])
   let selectedCompany = $state(null)
@@ -36,7 +37,7 @@
     item.amount = item.quantity * item.rate
 
     // Calculate tax amounts based on company state
-    if (selectedCompanyData?.state === 'Maharashtra') {
+    if (selectedCompanyData?.state === sellerDetails.state) {
       item.cgst_amount = item.amount * (item.tax_rate / 200) // Half of tax rate for CGST
       item.sgst_amount = item.amount * (item.tax_rate / 200) // Half of tax rate for SGST
       item.igst_amount = 0
@@ -267,7 +268,7 @@
             <span>Subtotal:</span>
             <span class="font-medium text-gray-800">{formatter.format(totalAmount)}</span>
           </div>
-          {#if selectedCompanyData?.state === 'Maharashtra'}
+          {#if selectedCompanyData?.state === sellerDetails.state}
             <div class="flex justify-between text-gray-600">
               <span>Total CGST:</span>
               <span class="font-medium text-gray-800">{formatter.format(totalCgst)}</span>
