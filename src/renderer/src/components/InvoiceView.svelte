@@ -8,27 +8,25 @@
   let { route } = $props()
   let invoiceData = $state(null)
 
-  console.log(route.result.path.params.id)
-
   onMount(async () => {
     if (route.result.path.params.id) {
       invoiceData = await window.api.getInvoiceDetails(parseInt(route.result.path.params.id))
     }
   })
 
-  function printInvoice() {
+  function printInvoice(): void {
     // Print the document
     window.print()
   }
 
-  function downloadPDF() {
+  function downloadPDF(): void {
     const element = document.querySelector('#invoice-content')
     const date = new Date(invoiceData.invoice.date).toISOString().split('T')[0]
     const filename = `${invoiceData.invoice.name}-${invoiceData.invoice.invoice_number}-${date}.pdf`
 
     // Hide buttons before generating PDF
     const buttons = document.querySelectorAll('.action-button')
-    buttons.forEach((button) => (button.style.display = 'none'))
+    buttons.forEach((button) => ((button as HTMLElement).style.display = 'none'))
 
     const options = {
       margin: 1,
@@ -44,7 +42,7 @@
       .save()
       .then(() => {
         // Restore buttons after PDF generation
-        buttons.forEach((button) => (button.style.display = ''))
+        buttons.forEach((button) => ((button as HTMLElement).style.display = ''))
       })
   }
 
@@ -238,7 +236,7 @@
         </tr>
       </thead>
       <tbody class="border-gray-300">
-        {#each invoiceData.items as item, index}
+        {#each invoiceData.items as item, index (item.id)}
           <tr class="border-b border-gray-300">
             <td class="border-r border-gray-300 p-2">{index + 1}</td>
             <td class="border-r border-gray-300 p-2">{item.description}</td>
@@ -254,7 +252,7 @@
           <tr class="border-b border-gray-300 bg-gray-50">
             <td class="border-r border-gray-300"></td>
             <td class="p-1 border-r border-gray-300 text-right">CGST</td>
-            {#each Array.from({ length: 5 }) as _}
+            {#each Array.from({ length: 5 }) as _, i (i)}
               <td class="border-r border-gray-300"></td>
             {/each}
             <td class="p-1 border-r border-gray-300 text-right"
@@ -264,7 +262,7 @@
           <tr class="border-b border-gray-300 bg-gray-50">
             <td class="border-r border-gray-300"></td>
             <td class="p-1 border-r border-gray-300 text-right">SGST</td>
-            {#each Array.from({ length: 5 }) as _}
+            {#each Array.from({ length: 5 }) as _, i (i)}
               <td class="border-r border-gray-300"></td>
             {/each}
 
@@ -276,7 +274,7 @@
           <tr class="border-b border-gray-300 bg-gray-50">
             <td class="border-r border-gray-300"></td>
             <td class="p-1 border-r border-gray-300 text-right">IGST</td>
-            {#each Array.from({ length: 5 }) as _}
+            {#each Array.from({ length: 5 }) as _, i (i)}
               <td class="border-r border-gray-300"></td>
             {/each}
             <td class="p-1 border-r border-gray-300 text-right"
@@ -331,7 +329,7 @@
             </tr>
           </thead>
           <tbody>
-            {#each invoiceData.items as item}
+            {#each invoiceData.items as item (item.id)}
               <tr class="border-b border-gray-300">
                 <td class="p-1 border-r border-gray-300 text-center">{item.hsn_code || ''}</td>
                 <td class="p-1 border-r border-gray-300 text-right">{item.amount.toFixed(2)}</td>

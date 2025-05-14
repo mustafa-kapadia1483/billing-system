@@ -32,7 +32,7 @@
     companies = await window.api.getCompanies()
   })
 
-  function updateItemAmount(index: number) {
+  function updateItemAmount(index: number): void {
     const item = items[index]
     item.amount = item.quantity * item.rate
 
@@ -50,33 +50,30 @@
     items = [...items]
   }
 
-  function addItem() {
-    items = [
-      ...items,
-      {
-        description: '',
-        hsn_code: '',
-        quantity: 1,
-        rate: 0,
-        amount: 0,
-        tax_rate: 18,
-        cgst_amount: 0,
-        sgst_amount: 0,
-        igst_amount: 0
-      }
-    ]
+  function addItem(): void {
+    items.push({
+      description: '',
+      hsn_code: '',
+      quantity: 1,
+      rate: 0,
+      amount: 0,
+      tax_rate: 18,
+      cgst_amount: 0,
+      sgst_amount: 0,
+      igst_amount: 0
+    })
   }
 
-  function removeItem(index: number) {
+  function removeItem(index: number): void {
     items = items.filter((_, i) => i !== index)
   }
 
-  function handleCompanyChange(event) {
+  function handleCompanyChange(event): void {
     const companyId = event.target.value
     selectedCompanyData = companies.find((c) => c.id === parseInt(companyId))
   }
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: SubmitEvent): Promise<void> {
     e.preventDefault()
     if (!selectedCompany) return
 
@@ -137,25 +134,11 @@
           required
         >
           <option value={null} class="text-gray-500">Select a company</option>
-          {#each companies as company}
+          {#each companies as company (company.id)}
             <option value={company.id}>{company.name}</option>
           {/each}
         </select>
       </div>
-      <!-- <div class="group">
-        <label class="block text-sm font-semibold text-gray-800 mb-1.5">Tax Rate</label>
-        <select
-          bind:value={selectedTaxRate}
-          class="input w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors appearance-none"
-          required
-        >
-          <option value={3}>3%</option>
-          <option value={5}>5%</option>
-          <option value={12}>12%</option>
-          <option value={18}>18%</option>
-          <option value={28}>28%</option>
-        </select>
-      </div> -->
     </div>
 
     <div class="space-y-4">
@@ -178,7 +161,7 @@
         </button>
       </div>
 
-      {#each items as item, i}
+      {#each items as item, i (i)}
         <div
           class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end bg-gray-50 p-4 rounded-lg border border-gray-200"
         >

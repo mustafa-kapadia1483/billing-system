@@ -9,6 +9,7 @@ declare global {
       createInvoice: (invoice: any) => Promise<number>
       getInvoices: () => Promise<any[]>
       getInvoiceDetails: (id: number) => Promise<any>
+      deleteInvoice: (id: number) => Promise<any>
     }
   }
 }

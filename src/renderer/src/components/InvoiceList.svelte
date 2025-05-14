@@ -1,23 +1,24 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { goto } from '@mateothegreat/svelte5-router'
+  import { formatter } from '../utils/formatting'
 
   let invoices = $state([])
-  $inspect(invoices)
+
   onMount(async () => {
     loadInvoices()
   })
 
-  async function loadInvoices() {
+  async function loadInvoices(): Promise<void> {
     invoices = await window.api.getInvoices()
   }
 
-  function viewInvoice(id: number) {
+  function viewInvoice(id: number): void {
     console.log('Viewing invoice with ID:', id)
     goto(`/invoice/${id}`)
   }
 
-  async function deleteInvoice(id: number) {
+  async function deleteInvoice(id: number): Promise<void> {
     await window.api.deleteInvoice(id)
     await loadInvoices()
   }
@@ -54,7 +55,7 @@
         </tr>
       </thead>
       <tbody class="bg-white divide-y divide-gray-200">
-        {#each invoices as invoice}
+        {#each invoices as invoice (invoice.id)}
           <tr>
             <td class="px-6 py-4 whitespace-nowrap">{invoice.invoice_number}</td>
             <td class="px-6 py-4 whitespace-nowrap"
@@ -62,7 +63,7 @@
             >
             <td class="px-6 py-4 whitespace-nowrap">{invoice.company_name}</td>
             <td class="px-6 py-4 whitespace-nowrap">{invoice.gstin}</td>
-            <td class="px-6 py-4 whitespace-nowrap">₹{invoice.total_amount}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{formatter.format(invoice.total_amount)}</td>
             <td class="px-6 py-4 whitespace-nowrap space-x-2">
               <button class="btn btn-secondary text-sm" onclick={() => viewInvoice(invoice.id)}>
                 View

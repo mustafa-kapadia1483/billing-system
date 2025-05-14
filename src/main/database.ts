@@ -4,7 +4,7 @@ import { join } from 'path'
 
 // Type declarations for database tables
 const dbPath = join(app.getPath('userData'), 'invoices.db')
-const db = new Database(dbPath)
+const db = new Database(dbPath) as Database.Database
 
 // Initialize database tables
 db.exec(`
