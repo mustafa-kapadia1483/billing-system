@@ -5,34 +5,65 @@
   let companies = $state([])
   let selectedCompany = $state(null)
   let selectedCompanyData = $state(null)
-  let items = $state([{ description: '', hsn_code: '', quantity: 1, rate: 0, amount: 0 }])
+  let items = $state([
+    {
+      description: '',
+      hsn_code: '',
+      quantity: 1,
+      rate: 0,
+      amount: 0,
+      tax_rate: 18,
+      cgst_amount: 0,
+      sgst_amount: 0,
+      igst_amount: 0
+    }
+  ])
   let invoiceNumber = $state('')
   let invoiceDate = $state(new Date().toISOString().split('T')[0])
-  let selectedTaxRate = $state(18) // Default to 18%
 
   let totalAmount = $derived(items.reduce((sum, item) => sum + item.amount, 0))
-  let cgstAmount = $derived(
-    selectedCompanyData?.state === 'Maharashtra' ? totalAmount * (selectedTaxRate / 200) : 0
-  )
-  let sgstAmount = $derived(
-    selectedCompanyData?.state === 'Maharashtra' ? totalAmount * (selectedTaxRate / 200) : 0
-  )
-  let igstAmount = $derived(
-    selectedCompanyData?.state !== 'Maharashtra' ? totalAmount * (selectedTaxRate / 100) : 0
-  )
-  let grandTotal = $derived(totalAmount + cgstAmount + sgstAmount + igstAmount)
+  let totalCgst = $derived(items.reduce((sum, item) => sum + item.cgst_amount, 0))
+  let totalSgst = $derived(items.reduce((sum, item) => sum + item.sgst_amount, 0))
+  let totalIgst = $derived(items.reduce((sum, item) => sum + item.igst_amount, 0))
+  let grandTotal = $derived(totalAmount + totalCgst + totalSgst + totalIgst)
 
   onMount(async () => {
     companies = await window.api.getCompanies()
   })
 
   function updateItemAmount(index: number) {
-    items[index].amount = items[index].quantity * items[index].rate
+    const item = items[index]
+    item.amount = item.quantity * item.rate
+
+    // Calculate tax amounts based on company state
+    if (selectedCompanyData?.state === 'Maharashtra') {
+      item.cgst_amount = item.amount * (item.tax_rate / 200) // Half of tax rate for CGST
+      item.sgst_amount = item.amount * (item.tax_rate / 200) // Half of tax rate for SGST
+      item.igst_amount = 0
+    } else {
+      item.cgst_amount = 0
+      item.sgst_amount = 0
+      item.igst_amount = item.amount * (item.tax_rate / 100) // Full tax rate for IGST
+    }
+
     items = [...items]
   }
 
   function addItem() {
-    items = [...items, { description: '', hsn_code: '', quantity: 1, rate: 0, amount: 0 }]
+    items = [
+      ...items,
+      {
+        description: '',
+        hsn_code: '',
+        quantity: 1,
+        rate: 0,
+        amount: 0,
+        tax_rate: 18,
+        cgst_amount: 0,
+        sgst_amount: 0,
+        igst_amount: 0
+      }
+    ]
   }
 
   function removeItem(index: number) {
@@ -54,10 +85,9 @@
       companyId: $state.snapshot(selectedCompany),
       items: $state.snapshot(items),
       totalAmount: $state.snapshot(totalAmount),
-      cgstAmount: $state.snapshot(cgstAmount),
-      sgstAmount: $state.snapshot(sgstAmount),
-      igstAmount: $state.snapshot(igstAmount),
-      tax_rate: $state.snapshot(selectedTaxRate)
+      cgstAmount: $state.snapshot(totalCgst),
+      sgstAmount: $state.snapshot(totalSgst),
+      igstAmount: $state.snapshot(totalIgst)
     }
 
     await window.api.createInvoice(invoice)
@@ -111,7 +141,7 @@
           {/each}
         </select>
       </div>
-      <div class="group">
+      <!-- <div class="group">
         <label class="block text-sm font-semibold text-gray-800 mb-1.5">Tax Rate</label>
         <select
           bind:value={selectedTaxRate}
@@ -124,7 +154,7 @@
           <option value={18}>18%</option>
           <option value={28}>28%</option>
         </select>
-      </div>
+      </div> -->
     </div>
 
     <div class="space-y-4">
@@ -169,7 +199,7 @@
               placeholder="e.g. 8471"
             />
           </div>
-          <div class="md:col-span-2">
+          <div class="md:col-1">
             <label class="block text-sm font-semibold text-gray-800 mb-1.5">Quantity</label>
             <input
               type="number"
@@ -191,6 +221,20 @@
               step="0.01"
               required
             />
+          </div>
+          <div class="md:col-span-1">
+            <label class="block text-sm font-semibold text-gray-800 mb-1.5">Tax Rate</label>
+            <select
+              bind:value={item.tax_rate}
+              onchange={() => updateItemAmount(i)}
+              class="input w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors appearance-none"
+            >
+              <option value={3}>3%</option>
+              <option value={5}>5%</option>
+              <option value={12}>12%</option>
+              <option value={18}>18%</option>
+              <option value={28}>28%</option>
+            </select>
           </div>
           <div class="md:col-span-2">
             <label class="block text-sm font-semibold text-gray-800 mb-1.5">Amount</label>
@@ -225,17 +269,17 @@
           </div>
           {#if selectedCompanyData?.state === 'Maharashtra'}
             <div class="flex justify-between text-gray-600">
-              <span>CGST ({selectedTaxRate / 2}%):</span>
-              <span class="font-medium text-gray-800">{formatter.format(cgstAmount)}</span>
+              <span>Total CGST:</span>
+              <span class="font-medium text-gray-800">{formatter.format(totalCgst)}</span>
             </div>
             <div class="flex justify-between text-gray-600">
-              <span>SGST ({selectedTaxRate / 2}%):</span>
-              <span class="font-medium text-gray-800">{formatter.format(sgstAmount)}</span>
+              <span>Total SGST:</span>
+              <span class="font-medium text-gray-800">{formatter.format(totalSgst)}</span>
             </div>
           {:else}
             <div class="flex justify-between text-gray-600">
-              <span>IGST ({selectedTaxRate}%):</span>
-              <span class="font-medium text-gray-800">{formatter.format(igstAmount)}</span>
+              <span>Total IGST:</span>
+              <span class="font-medium text-gray-800">{formatter.format(totalIgst)}</span>
             </div>
           {/if}
           <div class="flex justify-between text-gray-800 font-bold pt-2 border-t border-gray-200">

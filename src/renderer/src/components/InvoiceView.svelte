@@ -83,6 +83,22 @@
       ifsc_code: 'KKBK0001403'
     }
   }
+
+  let totalTaxAmount = $derived(
+    invoiceData.items?.reduce(
+      (acc, item) => acc + item.igst_amount + item.cgst_amount + item.sgst_amount,
+      0
+    )
+  )
+  let totalIgstAmount = $derived(
+    invoiceData.items?.reduce((acc, item) => acc + item.igst_amount, 0)
+  )
+  let totalCgstAmount = $derived(
+    invoiceData.items?.reduce((acc, item) => acc + item.cgst_amount, 0)
+  )
+  let totalSgstAmount = $derived(
+    invoiceData.items?.reduce((acc, item) => acc + item.sgst_amount, 0)
+  )
 </script>
 
 <div class="flex justify-center gap-4 mb-4 print:hidden">
@@ -250,61 +266,62 @@
           </tr>
         {/each}
         {#if invoiceData.invoice?.state === 'Maharashtra'}
-          <tr class="border-b border-gray-300">
+          <tr class="border-b border-gray-300 bg-gray-50">
             <td class="border-r border-gray-300"></td>
             <td class="p-1 border-r border-gray-300 text-right">CGST</td>
             {#each Array.from({ length: 5 }) as _}
               <td class="border-r border-gray-300"></td>
             {/each}
             <td class="p-1 border-r border-gray-300 text-right"
-              >{(
-                invoiceData.invoice.total_amount *
-                (invoiceData.invoice.tax_rate / 2 / 100)
-              ).toFixed(2)}</td
+              >{invoiceData.items.reduce((sum, item) => sum + item.cgst_amount, 0).toFixed(2)}</td
             >
           </tr>
-          <tr class="border-b border-gray-300">
+          <tr class="border-b border-gray-300 bg-gray-50">
             <td class="border-r border-gray-300"></td>
             <td class="p-1 border-r border-gray-300 text-right">SGST</td>
             {#each Array.from({ length: 5 }) as _}
               <td class="border-r border-gray-300"></td>
             {/each}
+
             <td class="p-1 border-r border-gray-300 text-right"
-              >{(
-                invoiceData.invoice.total_amount *
-                (invoiceData.invoice.tax_rate / 2 / 100)
-              ).toFixed(2)}</td
+              >{invoiceData.items.reduce((sum, item) => sum + item.sgst_amount, 0).toFixed(2)}</td
             >
           </tr>
         {:else}
-          <tr class="border-b border-gray-300">
+          <tr class="border-b border-gray-300 bg-gray-50">
             <td class="border-r border-gray-300"></td>
             <td class="p-1 border-r border-gray-300 text-right">IGST</td>
             {#each Array.from({ length: 5 }) as _}
               <td class="border-r border-gray-300"></td>
             {/each}
-
             <td class="p-1 border-r border-gray-300 text-right"
-              >{(invoiceData.invoice.total_amount * (invoiceData.invoice.tax_rate / 100)).toFixed(
-                2
-              )}
-            </td>
+              >{invoiceData.items.reduce((sum, item) => sum + item.igst_amount, 0).toFixed(2)}</td
+            >
           </tr>
         {/if}
         <tr class="border-b border-gray-300">
           <td colspan="7" class="border-r border-gray-300 p-2 text-right font-semibold">Total</td>
-          <td class="p-1 text-right font-semibold"
-            >{formatter.format(
-              invoiceData.invoice.total_amount +
-                invoiceData.invoice.total_amount * (invoiceData.invoice.tax_rate / 100)
-            )}</td
-          >
+          <td class="p-1 text-right font-semibold">
+            {formatter.format(
+              invoiceData.items.reduce((sum, item) => {
+                return sum + item.amount + (item.cgst_amount + item.sgst_amount + item.igst_amount)
+              }, 0)
+            )}
+          </td>
         </tr>
         <tr class="border-b border-gray-300">
           <td colspan="7" class="border-r border-gray-300 p-2 text-left">
             <div class="flex gap-2">
               <p class="font-semibold mb-2">Amount Chargeable (in words):</p>
-              <p>{toWords.convert(invoiceData.invoice.total_amount)}</p>
+              <p>
+                {toWords.convert(
+                  invoiceData.items.reduce((sum, item) => {
+                    return (
+                      sum + item.amount + (item.cgst_amount + item.sgst_amount + item.igst_amount)
+                    )
+                  }, 0)
+                )}
+              </p>
             </div>
           </td>
           <td class="p-1 text-right font-semibold"> E. & O.E </td>
@@ -334,29 +351,22 @@
                 <td class="p-1 border-r border-gray-300">{item.hsn_code || ''}</td>
                 <td class="p-1 border-r border-gray-300 text-right">{item.amount.toFixed(2)}</td>
                 {#if invoiceData.invoice?.state === 'Maharashtra'}
-                  <td class="p-1 border-r border-gray-300 text-center"
-                    >{invoiceData.invoice.tax_rate / 2}%</td
-                  >
+                  <td class="p-1 border-r border-gray-300 text-center">{item.tax_rate / 2}%</td>
                   <td class="p-1 border-r border-gray-300 text-right"
-                    >{(item.amount * (invoiceData.invoice.tax_rate / 200)).toFixed(2)}</td
+                    >{item.cgst_amount.toFixed(2)}</td
                   >
-                  <td class="p-1 border-r border-gray-300 text-center"
-                    >{invoiceData.invoice.tax_rate / 2}%</td
-                  >
+                  <td class="p-1 border-r border-gray-300 text-center">{item.tax_rate / 2}%</td>
                   <td class="p-1 border-r border-gray-300 text-right"
-                    >{(item.amount * (invoiceData.invoice.tax_rate / 200)).toFixed(2)}</td
+                    >{item.sgst_amount.toFixed(2)}</td
                   >
+                  <td class="p-1 text-right">{(item.cgst_amount + item.sgst_amount).toFixed(2)}</td>
                 {:else}
-                  <td class="p-1 border-r border-gray-300 text-center"
-                    >{invoiceData.invoice.tax_rate}%</td
-                  >
+                  <td class="p-1 border-r border-gray-300 text-center">{item.tax_rate}%</td>
                   <td class="p-1 border-r border-gray-300 text-right"
-                    >{(item.amount * (invoiceData.invoice.tax_rate / 100)).toFixed(2)}</td
+                    >{item.igst_amount.toFixed(2)}</td
                   >
+                  <td class="p-1 text-right">{item.igst_amount.toFixed(2)}</td>
                 {/if}
-                <td class="p-1 border-r border-gray-300 text-right"
-                  >{(item.amount * (invoiceData.invoice.tax_rate / 100)).toFixed(2)}</td
-                >
               </tr>
             {/each}
             <tr class="border-b border-gray-300">
@@ -367,35 +377,27 @@
               {#if invoiceData.invoice?.state === 'Maharashtra'}
                 <td class="border-r"></td>
                 <td class="p-1 border-r border-gray-300 text-right font-semibold"
-                  >{formatter.format(
-                    invoiceData.invoice.total_amount * (invoiceData.invoice.tax_rate / 2 / 100)
-                  )}
+                  >{formatter.format(totalCgstAmount)}
                 </td>
                 <td class="border-r"></td>
                 <td class="p-1 border-r border-gray-300 text-right font-semibold"
-                  >{formatter.format(
-                    invoiceData.invoice.total_amount * (invoiceData.invoice.tax_rate / 2 / 100)
-                  )}
+                  >{formatter.format(totalSgstAmount)}
                 </td>
               {:else}
                 <td class="border-r"></td>
                 <td class="p-1 border-r border-gray-300 text-right font-semibold"
-                  >{formatter.format(
-                    invoiceData.invoice.total_amount * (invoiceData.invoice.tax_rate / 100)
-                  )}</td
+                  >{formatter.format(totalIgstAmount)}</td
                 >
               {/if}
               <td class="p-1 border-r border-gray-300 text-right font-semibold"
-                >{formatter.format(
-                  invoiceData.invoice.total_amount * (invoiceData.invoice.tax_rate / 100)
-                )}</td
+                >{formatter.format(totalTaxAmount)}</td
               >
             </tr>
             <tr>
               <td colspan="5" class="border-r border-gray-300 p-1 text-left">
                 <div class="flex gap-2">
                   <p class="font-semibold mb-2">Tax Amount (in words):</p>
-                  <p>{toWords.convert(invoiceData.invoice.total_amount)}</p>
+                  <p>{toWords.convert(totalTaxAmount)}</p>
                 </div>
               </td>
             </tr>

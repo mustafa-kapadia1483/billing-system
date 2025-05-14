@@ -41,6 +41,10 @@ db.exec(`
     quantity INTEGER NOT NULL,
     rate DECIMAL(10,2) NOT NULL,
     amount DECIMAL(10,2) NOT NULL,
+    tax_rate DECIMAL(10,2) DEFAULT 18.0,
+    cgst_amount DECIMAL(10,2) DEFAULT 0,
+    sgst_amount DECIMAL(10,2) DEFAULT 0,
+    igst_amount DECIMAL(10,2) DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (invoice_id) REFERENCES invoices(id)
   );

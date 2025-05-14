@@ -28,8 +28,8 @@ export const dbUtils = {
       const invoiceStmt = db.prepare(`
         INSERT INTO invoices (
           invoice_number, date, company_id, total_amount,
-          cgst_amount, sgst_amount, igst_amount, tax_rate
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+          cgst_amount, sgst_amount, igst_amount
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)
       `)
 
       const invoiceResult = invoiceStmt.run(
@@ -39,14 +39,14 @@ export const dbUtils = {
         invoiceData.totalAmount,
         invoiceData.cgstAmount,
         invoiceData.sgstAmount,
-        invoiceData.igstAmount,
-        invoiceData.tax_rate
+        invoiceData.igstAmount
       )
 
       const itemStmt = db.prepare(`
         INSERT INTO invoice_items (
-          invoice_id, description, hsn_code, quantity, rate, amount
-        ) VALUES (?, ?, ?, ?, ?, ?)
+          invoice_id, description, hsn_code, quantity, rate, amount,
+          tax_rate, cgst_amount, sgst_amount, igst_amount
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `)
 
       for (const item of items) {
@@ -56,7 +56,11 @@ export const dbUtils = {
           item.hsn_code,
           item.quantity,
           item.rate,
-          item.amount
+          item.amount,
+          item.tax_rate,
+          item.cgst_amount,
+          item.sgst_amount,
+          item.igst_amount
         )
       }
 
