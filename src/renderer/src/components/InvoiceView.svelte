@@ -1,14 +1,12 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { formatter } from './../utils/formatting'
-  import html2pdf from 'html2pdf.js'
   import { ToWords } from 'to-words'
   import sellerDetails from '../config/seller.json'
   import upiqr from 'upiqr'
 
   let { route } = $props()
   let invoiceData = $state(null)
-  // let upiQrCode = $state(null)
 
   onMount(async () => {
     if (route.result.path.params.id) {
@@ -22,30 +20,10 @@
   }
 
   function downloadPDF(): void {
-    const element = document.querySelector('#invoice-content')
     const date = new Date(invoiceData.invoice.date).toISOString().split('T')[0]
-    const filename = `${invoiceData.invoice.name}-${invoiceData.invoice.invoice_number}-${date}.pdf`
-
-    // Hide buttons before generating PDF
-    const buttons = document.querySelectorAll('.action-button')
-    buttons.forEach((button) => ((button as HTMLElement).style.display = 'none'))
-
-    const options = {
-      margin: 1,
-      filename: filename,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 1 },
-      jsPDF: { unit: 'cm', format: 'a4', orientation: 'portrait' }
-    }
-
-    html2pdf()
-      .set(options)
-      .from(element)
-      .save()
-      .then(() => {
-        // Restore buttons after PDF generation
-        buttons.forEach((button) => ((button as HTMLElement).style.display = ''))
-      })
+    window.api.downloadPdf(
+      `${invoiceData.invoice.name}-${invoiceData.invoice.invoice_number}-${date}.pdf`
+    )
   }
 
   const toWords = new ToWords({
@@ -165,187 +143,161 @@
       </div>
     </div>
 
-    <div class="grid grid-cols-1 gap-4 mb-4 border border-gray-300">
-      <div class="w-full">
-        <table class="w-full text-xs">
-          <thead>
-            <tr class="border-b border-gray-300">
-              <th class="border-r border-gray-300 p-2 text-left">Sr No.</th>
-              <th class="border-r border-gray-300 p-2 text-left">Description of Goods</th>
-              <th class="border-r border-gray-300 p-2 text-center">HSN/SAC</th>
-              <th class="border-r border-gray-300 p-2 text-center">Quantity</th>
-              <th class="border-r border-gray-300 p-2 text-right">Rate</th>
-              <th class="border-r border-gray-300 p-2 text-center">per</th>
-              <th class="border-r border-gray-300 p-2 text-center">Disc. %</th>
-              <th class="p-1 text-right">Amount</th>
-            </tr>
-          </thead>
-          <tbody>
-            {#each invoiceData.items as item, index (item.id)}
-              <tr class="border-b border-gray-300">
-                <td class="border-r border-gray-300 p-2">{index + 1}</td>
-                <td class="border-r border-gray-300 p-2">{item.description}</td>
-                <td class="border-r border-gray-300 p-2 text-center">{item.hsn_code || ''}</td>
-                <td class="border-r border-gray-300 p-2 text-center">{item.quantity} No</td>
-                <td class="border-r border-gray-300 p-2 text-right">{item.rate.toFixed(2)}</td>
-                <td class="border-r border-gray-300 p-2 text-center">No</td>
-                <td class="border-r border-gray-300 p-2 text-center">-</td>
-                <td class="p-1 text-right">{item.amount.toFixed(2)}</td>
-              </tr>
-            {/each}
-            {#if invoiceData.invoice?.state === sellerDetails.state}
-              <tr class="border-b border-gray-300 bg-gray-50">
-                <td class="border-r border-gray-300"></td>
-                <td class="p-1 border-r border-gray-300 text-right">CGST</td>
-                {#each Array.from({ length: 5 }) as _, i (i)}
-                  <td class="border-r border-gray-300"></td>
-                {/each}
-                <td class="p-1 text-right"
-                  >{invoiceData.items
-                    .reduce((sum, item) => sum + item.cgst_amount, 0)
-                    .toFixed(2)}</td
-                >
-              </tr>
-              <tr class="border-b border-gray-300 bg-gray-50">
-                <td class="border-r border-gray-300"></td>
-                <td class="p-1 border-r border-gray-300 text-right">SGST</td>
-                {#each Array.from({ length: 5 }) as _, i (i)}
-                  <td class="border-r border-gray-300"></td>
-                {/each}
-
-                <td class="p-1 text-right"
-                  >{invoiceData.items
-                    .reduce((sum, item) => sum + item.sgst_amount, 0)
-                    .toFixed(2)}</td
-                >
-              </tr>
-            {:else}
-              <tr class="border-b border-gray-300 bg-gray-50">
-                <td class="border-r border-gray-300"></td>
-                <td class="p-1 border-r border-gray-300 text-right">IGST</td>
-                {#each Array.from({ length: 5 }) as _, i (i)}
-                  <td class="border-r border-gray-300"></td>
-                {/each}
-                <td class="p-1 text-right"
-                  >{invoiceData.items
-                    .reduce((sum, item) => sum + item.igst_amount, 0)
-                    .toFixed(2)}</td
-                >
-              </tr>
-            {/if}
-            <tr class="border-b border-gray-300">
-              <td colspan="7" class="border-r border-gray-300 p-2 text-right font-semibold"
-                >Total</td
-              >
-              <td class="p-1 text-right font-semibold">
-                {formatter.format(
-                  invoiceData.items.reduce((sum, item) => {
-                    return (
-                      sum + item.amount + (item.cgst_amount + item.sgst_amount + item.igst_amount)
-                    )
-                  }, 0)
-                )}
-              </td>
-            </tr>
+    <div class="w-full mb-4">
+      <table
+        class="w-full border border-gray-300 border-collapse text-xs [&_*]:border [&_*]:border-gray-300"
+      >
+        <thead>
+          <tr>
+            <th class="p-2 text-left">Sr No.</th>
+            <th class="p-2 text-left">Description of Goods</th>
+            <th class="p-2 text-center">HSN/SAC</th>
+            <th class="p-2 text-center">Quantity</th>
+            <th class="p-2 text-right">Rate</th>
+            <th class="p-2 text-center">per</th>
+            <th class="p-2 text-center">Disc. %</th>
+            <th class="p-1 text-right">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          {#each invoiceData.items as item, index (item.id)}
             <tr>
-              <td colspan="7" class="border-r border-gray-300 p-2 text-left">
-                <div class="flex gap-2">
-                  <p class="font-semibold mb-2">Amount Chargeable (in words):</p>
-                  <p>
-                    {toWords.convert(
-                      invoiceData.items.reduce((sum, item) => {
-                        return (
-                          sum +
-                          item.amount +
-                          (item.cgst_amount + item.sgst_amount + item.igst_amount)
-                        )
-                      }, 0)
-                    )}
-                  </p>
-                </div>
-              </td>
-              <td class="p-1 text-right font-semibold"> E. & O.E </td>
+              <td class="p-2">{index + 1}</td>
+              <td class="p-2">{item.description}</td>
+              <td class="p-2 text-center">{item.hsn_code || ''}</td>
+              <td class="p-2 text-center">{item.quantity} No</td>
+              <td class="p-2 text-right">{item.rate.toFixed(2)}</td>
+              <td class="p-2 text-center">No</td>
+              <td class="p-2 text-center">-</td>
+              <td class="p-1 text-right">{item.amount.toFixed(2)}</td>
             </tr>
-          </tbody>
-        </table>
-      </div>
+          {/each}
+          {#if invoiceData.invoice?.state === sellerDetails.state}
+            <tr class="bg-gray-50">
+              <td></td>
+              <td class="p-1 text-right">CGST</td>
+              {#each Array.from({ length: 5 }) as _, i (i)}
+                <td></td>
+              {/each}
+              <td class="p-1 text-right"
+                >{invoiceData.items.reduce((sum, item) => sum + item.cgst_amount, 0).toFixed(2)}</td
+              >
+            </tr>
+            <tr class="bg-gray-50">
+              <td></td>
+              <td class="p-1 border-r text-right">SGST</td>
+              {#each Array.from({ length: 5 }) as _, i (i)}
+                <td></td>
+              {/each}
+
+              <td class="p-1 text-right"
+                >{invoiceData.items.reduce((sum, item) => sum + item.sgst_amount, 0).toFixed(2)}</td
+              >
+            </tr>
+          {:else}
+            <tr class="bg-gray-50">
+              <td></td>
+              <td class="p-1 text-right">IGST</td>
+              {#each Array.from({ length: 5 }) as _, i (i)}
+                <td></td>
+              {/each}
+              <td class="p-1 text-right"
+                >{invoiceData.items.reduce((sum, item) => sum + item.igst_amount, 0).toFixed(2)}</td
+              >
+            </tr>
+          {/if}
+          <tr>
+            <td colspan="7" class="p-2 text-right font-semibold">Total</td>
+            <td class="p-1 text-right font-semibold">
+              {formatter.format(
+                invoiceData.items.reduce((sum, item) => {
+                  return (
+                    sum + item.amount + (item.cgst_amount + item.sgst_amount + item.igst_amount)
+                  )
+                }, 0)
+              )}
+            </td>
+          </tr>
+          <tr>
+            <td colspan="7" class="p-2 text-left">
+              <div class="flex gap-2 border-none">
+                <p class="font-semibold mb-2 border-none">Amount Chargeable (in words):</p>
+                <p class="border-none">
+                  {toWords.convert(
+                    invoiceData.items.reduce((sum, item) => {
+                      return (
+                        sum + item.amount + (item.cgst_amount + item.sgst_amount + item.igst_amount)
+                      )
+                    }, 0)
+                  )}
+                </p>
+              </div>
+            </td>
+            <td class="p-1 text-right font-semibold"> E. & O.E </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    <div class="grid grid-cols-1 gap-4 mb-4">
-      <div class="border w-full border-gray-300">
-        <table class="w-full text-xs">
-          <thead>
-            <tr class="border-b border-gray-300">
-              <th class="p-1 border-r border-gray-300">HSN/SAC</th>
-              <th class="p-1 border-r border-gray-300">Taxable Value</th>
-              {#if invoiceData.invoice?.state === sellerDetails.state}
-                <th colspan="2" class="p-1 border-r border-gray-300 text-center">CGST</th>
-                <th colspan="2" class="p-1 border-r border-gray-300 text-center">SGST/UTGST</th>
-              {:else}
-                <th colspan="2" class="p-1 border-r border-gray-300 text-center">IGST</th>
-              {/if}
-              <th class="p-1">Total Tax Amount</th>
-            </tr>
-          </thead>
-          <tbody>
-            {#each invoiceData.items as item (item.id)}
-              <tr class="border-b border-gray-300">
-                <td class="p-1 border-r border-gray-300 text-center">{item.hsn_code || ''}</td>
-                <td class="p-1 border-r border-gray-300 text-right">{item.amount.toFixed(2)}</td>
-                {#if invoiceData.invoice?.state === sellerDetails.state}
-                  <td class="p-1 border-r border-gray-300 text-center">{item.tax_rate / 2}%</td>
-                  <td class="p-1 border-r border-gray-300 text-right"
-                    >{item.cgst_amount.toFixed(2)}</td
-                  >
-                  <td class="p-1 border-r border-gray-300 text-center">{item.tax_rate / 2}%</td>
-                  <td class="p-1 border-r border-gray-300 text-right"
-                    >{item.sgst_amount.toFixed(2)}</td
-                  >
-                  <td class="p-1 text-right">{(item.cgst_amount + item.sgst_amount).toFixed(2)}</td>
-                {:else}
-                  <td class="p-1 border-r border-gray-300 text-center">{item.tax_rate}%</td>
-                  <td class="p-1 border-r border-gray-300 text-right"
-                    >{item.igst_amount.toFixed(2)}</td
-                  >
-                  <td class="p-1 text-right">{item.igst_amount.toFixed(2)}</td>
-                {/if}
-              </tr>
-            {/each}
-            <tr class="border-b border-gray-300">
-              <td class="p-1 border-r border-gray-300 text-right font-semibold"> Total </td>
-              <td class="p-1 border-r border-gray-300 text-right font-semibold"
-                >{formatter.format(invoiceData.invoice.total_amount)}</td
-              >
-              {#if invoiceData.invoice?.state === sellerDetails.state}
-                <td class="border-r"></td>
-                <td class="p-1 border-r border-gray-300 text-right font-semibold"
-                  >{formatter.format(totalCgstAmount)}
-                </td>
-                <td class="border-r"></td>
-                <td class="p-1 border-r border-gray-300 text-right font-semibold"
-                  >{formatter.format(totalSgstAmount)}
-                </td>
-              {:else}
-                <td class="border-r"></td>
-                <td class="p-1 border-r border-gray-300 text-right font-semibold"
-                  >{formatter.format(totalIgstAmount)}</td
-                >
-              {/if}
-              <td class="p-1 border-r border-gray-300 text-right font-semibold"
-                >{formatter.format(totalTaxAmount)}</td
-              >
-            </tr>
+    <div class="w-full mb-4">
+      <table class="border w-full border-gray-300 text-xs [&_*]:border [&_*]:border-gray-300">
+        <thead>
+          <tr>
+            <th class="p-1">HSN/SAC</th>
+            <th class="p-1">Taxable Value</th>
+            {#if invoiceData.invoice?.state === sellerDetails.state}
+              <th colspan="2" class="p-1 text-center">CGST</th>
+              <th colspan="2" class="p-1 text-center">SGST/UTGST</th>
+            {:else}
+              <th colspan="2" class="p-1 text-center">IGST</th>
+            {/if}
+            <th class="p-1">Total Tax Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          {#each invoiceData.items as item (item.id)}
             <tr>
-              <td colspan="5" class="border-r border-gray-300 p-1 text-left">
-                <div class="flex gap-2">
-                  <p class="font-semibold mb-2">Tax Amount (in words):</p>
-                  <p>{toWords.convert(totalTaxAmount)}</p>
-                </div>
-              </td>
+              <td class="p-1 text-center">{item.hsn_code || ''}</td>
+              <td class="p-1 text-right">{item.amount.toFixed(2)}</td>
+              {#if invoiceData.invoice?.state === sellerDetails.state}
+                <td class="p-1 text-center">{item.tax_rate / 2}%</td>
+                <td class="p-1 text-right">{item.cgst_amount.toFixed(2)}</td>
+                <td class="p-1 text-center">{item.tax_rate / 2}%</td>
+                <td class="p-1 text-right">{item.sgst_amount.toFixed(2)}</td>
+                <td class="p-1 text-right">{(item.cgst_amount + item.sgst_amount).toFixed(2)}</td>
+              {:else}
+                <td class="p-1 text-center">{item.tax_rate}%</td>
+                <td class="p-1 text-right">{item.igst_amount.toFixed(2)}</td>
+                <td class="p-1 text-right">{item.igst_amount.toFixed(2)}</td>
+              {/if}
             </tr>
-          </tbody>
-        </table>
-      </div>
+          {/each}
+          <tr>
+            <td class="p-1 text-right font-semibold"> Total </td>
+            <td class="p-1 text-right font-semibold"
+              >{formatter.format(invoiceData.invoice.total_amount)}</td
+            >
+            {#if invoiceData.invoice?.state === sellerDetails.state}
+              <td class="border-r"></td>
+              <td class="p-1 text-right font-semibold">{formatter.format(totalCgstAmount)} </td>
+              <td class="border-r"></td>
+              <td class="p-1 text-right font-semibold">{formatter.format(totalSgstAmount)} </td>
+            {:else}
+              <td class="border-r"></td>
+              <td class="p-1 text-right font-semibold">{formatter.format(totalIgstAmount)}</td>
+            {/if}
+            <td class="p-1 text-right font-semibold">{formatter.format(totalTaxAmount)}</td>
+          </tr>
+          <tr>
+            <td colspan="7" class="p-1 text-left">
+              <div class="flex gap-2 border-none">
+                <p class="font-semibold mb-2 border-none">Tax Amount (in words):</p>
+                <p class="border-none">{toWords.convert(totalTaxAmount)}</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <div class="border border-gray-300 text-xs">

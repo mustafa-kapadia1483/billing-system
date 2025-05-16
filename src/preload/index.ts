@@ -6,8 +6,9 @@ const api = {
   getCompanies: () => ipcRenderer.invoke('get-companies'),
   createInvoice: (invoice) => ipcRenderer.invoke('create-invoice', invoice),
   getInvoices: () => ipcRenderer.invoke('get-invoices'),
-  getInvoiceDetails: (id) => ipcRenderer.invoke('get-invoice-details', id),
-  deleteInvoice: (id) => ipcRenderer.invoke('delete-invoice', id)
+  getInvoiceDetails: (id: number) => ipcRenderer.invoke('get-invoice-details', id),
+  deleteInvoice: (id: number) => ipcRenderer.invoke('delete-invoice', id),
+  downloadPdf: (fileName: string) => ipcRenderer.invoke('download-pdf', fileName)
 }
 
 if (process.contextIsolated) {

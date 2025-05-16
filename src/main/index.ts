@@ -3,6 +3,7 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { dbUtils } from './db-utils'
+import fs from 'fs'
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
@@ -63,6 +64,21 @@ app.whenReady().then(() => {
 
   ipcMain.handle('delete-invoice', (_, invoiceId) => {
     return dbUtils.deleteInvoice(invoiceId)
+  })
+
+  ipcMain.handle('download-pdf', async (_, fileName) => {
+    const downloadsPath = app.getPath('downloads')
+    const pdfPath = join(downloadsPath, fileName)
+
+    try {
+      const data = await BrowserWindow.getAllWindows()[0].webContents.printToPDF({})
+      await fs.promises.writeFile(pdfPath, data)
+      console.log(`Wrote PDF successfully to ${pdfPath}`)
+      return pdfPath
+    } catch (error) {
+      console.log(`Failed to write PDF to ${pdfPath}: `, error)
+      throw error
+    }
   })
 
   createWindow()
