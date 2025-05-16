@@ -34,7 +34,7 @@
       margin: 1,
       filename: filename,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
+      html2canvas: { scale: 1 },
       jsPDF: { unit: 'cm', format: 'a4', orientation: 'portrait' }
     }
 
@@ -125,205 +125,154 @@
 {#if invoiceData}
   <div
     id="invoice-content"
-    class="bg-white p-8 print:p-0 print:shadow-none max-w-5xl mx-auto text-sm"
+    class="bg-white p-8 print:p-0 print:shadow-none w-[210mm] mx-auto text-sm"
   >
-    <h1 class="text-xl font-bold text-center mb-4">Tax Invoice</h1>
+    <h1 class="text-xl font-bold mb-4">Tax Invoice</h1>
 
-    <div class="grid grid-cols-2 gap-4 mb-4">
-      <div class="border border-gray-300">
-        <div class="border-b p-3">
-          <p class="font-bold mb-1">{sellerDetails.name}</p>
-          <p class="text-xs leading-relaxed">
-            {sellerDetails.address_line1}<br />
-            {#if sellerDetails.address_line2}
-              {sellerDetails.address_line2}<br />
-            {/if}
-            {sellerDetails.city}<br />
-            GSTIN/UIN: {sellerDetails.gstin}<br />
-            State Name: {sellerDetails.state}
-          </p>
-        </div>
-        <div class=" p-3 mb-6 h-max">
-          <p class="font-semibold mb-2">Buyer (Bill to)</p>
-          <p class="font-bold">{invoiceData.invoice.name}</p>
-          <p class="text-xs leading-relaxed">
-            {invoiceData.invoice.address_line1}<br />
-            {#if invoiceData.invoice.address_line2}
-              {invoiceData.invoice.address_line2}<br />
-            {/if}
-            {invoiceData.invoice.city}<br />
-            GSTIN/UIN: {invoiceData.invoice.gstin}<br />
-            State Name: {invoiceData.invoice.state}
-          </p>
-        </div>
-      </div>
-
-      <table class="border border-gray-300 border-collapse w-full h-full text-xs">
-        <tbody class="divide-y divide-gray-300">
-          <tr class="h-[52px]">
-            <td class="border-r border-gray-300 p-2 align-top">
-              <p class="font-medium">Invoice No.</p>
-              <p class="mt-1">{invoiceData.invoice.invoice_number}</p>
-            </td>
-            <td class="p-1 align-top">
-              <p class="font-medium">Dated</p>
-              <p class="mt-1">{new Date(invoiceData.invoice.date).toLocaleDateString('en-IN')}</p>
-            </td>
-          </tr>
-          <tr class="h-[52px]">
-            <td class="border-r border-gray-300 p-2 align-top">
-              <p class="font-medium">Delivery Note</p>
-              <p class="mt-1">{invoiceData.invoice.delivery_note || ''}</p>
-            </td>
-            <td class="p-1 align-top">
-              <p class="font-medium">Mode/Terms of Payment</p>
-              <p class="mt-1">{invoiceData.invoice.payment_terms || ''}</p>
-            </td>
-          </tr>
-          <tr class="h-[52px]">
-            <td class="border-r border-gray-300 p-2 align-top">
-              <p class="font-medium">Reference No. & Date</p>
-              <p class="mt-1">{invoiceData.invoice.reference_no || ''}</p>
-            </td>
-            <td class="p-1 align-top">
-              <p class="font-medium">Other References</p>
-              <p class="mt-1">{invoiceData.invoice.other_ref || ''}</p>
-            </td>
-          </tr>
-          <tr class="h-[52px]">
-            <td class="border-r border-gray-300 p-2 align-top">
-              <p class="font-medium">Buyer's Order No.</p>
-              <p class="mt-1">{invoiceData.invoice.buyer_order_no || ''}</p>
-            </td>
-            <td class="p-1 align-top">
-              <p class="font-medium">Dated</p>
-              <p class="mt-1">{invoiceData.invoice.buyer_order_date || ''}</p>
-            </td>
-          </tr>
-          <tr class="h-[52px]">
-            <td class="border-r border-gray-300 p-2 align-top">
-              <p class="font-medium">Dispatch Doc No.</p>
-              <p class="mt-1">{invoiceData.invoice.dispatch_doc_no || ''}</p>
-            </td>
-            <td class="p-1 align-top">
-              <p class="font-medium">Delivery Note Date</p>
-              <p class="mt-1">{invoiceData.invoice.delivery_note_date || ''}</p>
-            </td>
-          </tr>
-          <tr class="h-[52px]">
-            <td class="border-r border-gray-300 p-2 align-top">
-              <p class="font-medium">Dispatched through</p>
-              <p class="mt-1">{invoiceData.invoice.dispatched_through || ''}</p>
-            </td>
-            <td class="p-1 align-top">
-              <p class="font-medium">Destination</p>
-              <p class="mt-1">{invoiceData.invoice.destination || ''}</p>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="2" class="p-1 align-top">
-              <p class="font-medium">Terms of Delivery</p>
-              <p class="mt-1">
-                {invoiceData.invoice.terms_of_delivery || 'Goods once sold will not be taken back'}
-              </p>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="grid grid-cols-[max-content_max-content] gap-2 text-xs mb-4">
+      <p>Invoice No #</p>
+      <p class="font-semibold">{invoiceData.invoice.invoice_number}</p>
+      <p>Invoice Date</p>
+      <p class="font-semibold">{new Date(invoiceData.invoice.date).toLocaleDateString('en-IN')}</p>
     </div>
 
-    <table class="w-full border border-gray-300 text-xs mb-4">
-      <thead>
-        <tr class="border-b border-gray-300">
-          <th class="border-r border-gray-300 p-2 text-left">SI No.</th>
-          <th class="border-r border-gray-300 p-2 text-left">Description of Goods</th>
-          <th class="border-r border-gray-300 p-2 text-center">HSN/SAC</th>
-          <th class="border-r border-gray-300 p-2 text-center">Quantity</th>
-          <th class="border-r border-gray-300 p-2 text-right">Rate</th>
-          <th class="border-r border-gray-300 p-2 text-center">per</th>
-          <th class="border-r border-gray-300 p-2 text-center">Disc. %</th>
-          <th class="p-1 text-right">Amount</th>
-        </tr>
-      </thead>
-      <tbody class="border-gray-300">
-        {#each invoiceData.items as item, index (item.id)}
-          <tr class="border-b border-gray-300">
-            <td class="border-r border-gray-300 p-2">{index + 1}</td>
-            <td class="border-r border-gray-300 p-2">{item.description}</td>
-            <td class="border-r border-gray-300 p-2 text-center">{item.hsn_code || ''}</td>
-            <td class="border-r border-gray-300 p-2 text-center">{item.quantity} No</td>
-            <td class="border-r border-gray-300 p-2 text-right">{item.rate.toFixed(2)}</td>
-            <td class="border-r border-gray-300 p-2 text-center">No</td>
-            <td class="border-r border-gray-300 p-2 text-center">-</td>
-            <td class="p-1 text-right">{item.amount.toFixed(2)}</td>
-          </tr>
-        {/each}
-        {#if invoiceData.invoice?.state === sellerDetails.state}
-          <tr class="border-b border-gray-300 bg-gray-50">
-            <td class="border-r border-gray-300"></td>
-            <td class="p-1 border-r border-gray-300 text-right">CGST</td>
-            {#each Array.from({ length: 5 }) as _, i (i)}
-              <td class="border-r border-gray-300"></td>
-            {/each}
-            <td class="p-1 border-r border-gray-300 text-right"
-              >{invoiceData.items.reduce((sum, item) => sum + item.cgst_amount, 0).toFixed(2)}</td
-            >
-          </tr>
-          <tr class="border-b border-gray-300 bg-gray-50">
-            <td class="border-r border-gray-300"></td>
-            <td class="p-1 border-r border-gray-300 text-right">SGST</td>
-            {#each Array.from({ length: 5 }) as _, i (i)}
-              <td class="border-r border-gray-300"></td>
-            {/each}
+    <div class="grid grid-cols-2 gap-4 mb-4 w-full">
+      <div class="border border-gray-300 p-3">
+        <p class="font-semibold mb-2">Billed by</p>
+        <p class="font-bold mb-1">{sellerDetails.name}</p>
+        <p class="text-xs leading-relaxed">
+          {sellerDetails.address_line1}<br />
+          {#if sellerDetails.address_line2}
+            {sellerDetails.address_line2}<br />
+          {/if}
+          {sellerDetails.city}<br />
+          GSTIN/UIN: {sellerDetails.gstin}<br />
+          State Name: {sellerDetails.state}
+        </p>
+      </div>
+      <div class="border border-gray-300 p-3 mb-6 h-full">
+        <p class="font-semibold mb-2">Bill to</p>
+        <p class="font-bold">{invoiceData.invoice.name}</p>
+        <p class="text-xs leading-relaxed">
+          {invoiceData.invoice.address_line1}<br />
+          {#if invoiceData.invoice.address_line2}
+            {invoiceData.invoice.address_line2}<br />
+          {/if}
+          {invoiceData.invoice.city}<br />
+          GSTIN/UIN: {invoiceData.invoice.gstin}<br />
+          State Name: {invoiceData.invoice.state}
+        </p>
+      </div>
+    </div>
 
-            <td class="p-1 border-r border-gray-300 text-right"
-              >{invoiceData.items.reduce((sum, item) => sum + item.sgst_amount, 0).toFixed(2)}</td
-            >
-          </tr>
-        {:else}
-          <tr class="border-b border-gray-300 bg-gray-50">
-            <td class="border-r border-gray-300"></td>
-            <td class="p-1 border-r border-gray-300 text-right">IGST</td>
-            {#each Array.from({ length: 5 }) as _, i (i)}
-              <td class="border-r border-gray-300"></td>
+    <div class="grid grid-cols-1 gap-4 mb-4 border border-gray-300">
+      <div class="w-full">
+        <table class="w-full text-xs">
+          <thead>
+            <tr class="border-b border-gray-300">
+              <th class="border-r border-gray-300 p-2 text-left">Sr No.</th>
+              <th class="border-r border-gray-300 p-2 text-left">Description of Goods</th>
+              <th class="border-r border-gray-300 p-2 text-center">HSN/SAC</th>
+              <th class="border-r border-gray-300 p-2 text-center">Quantity</th>
+              <th class="border-r border-gray-300 p-2 text-right">Rate</th>
+              <th class="border-r border-gray-300 p-2 text-center">per</th>
+              <th class="border-r border-gray-300 p-2 text-center">Disc. %</th>
+              <th class="p-1 text-right">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            {#each invoiceData.items as item, index (item.id)}
+              <tr class="border-b border-gray-300">
+                <td class="border-r border-gray-300 p-2">{index + 1}</td>
+                <td class="border-r border-gray-300 p-2">{item.description}</td>
+                <td class="border-r border-gray-300 p-2 text-center">{item.hsn_code || ''}</td>
+                <td class="border-r border-gray-300 p-2 text-center">{item.quantity} No</td>
+                <td class="border-r border-gray-300 p-2 text-right">{item.rate.toFixed(2)}</td>
+                <td class="border-r border-gray-300 p-2 text-center">No</td>
+                <td class="border-r border-gray-300 p-2 text-center">-</td>
+                <td class="p-1 text-right">{item.amount.toFixed(2)}</td>
+              </tr>
             {/each}
-            <td class="p-1 border-r border-gray-300 text-right"
-              >{invoiceData.items.reduce((sum, item) => sum + item.igst_amount, 0).toFixed(2)}</td
-            >
-          </tr>
-        {/if}
-        <tr class="border-b border-gray-300">
-          <td colspan="7" class="border-r border-gray-300 p-2 text-right font-semibold">Total</td>
-          <td class="p-1 text-right font-semibold">
-            {formatter.format(
-              invoiceData.items.reduce((sum, item) => {
-                return sum + item.amount + (item.cgst_amount + item.sgst_amount + item.igst_amount)
-              }, 0)
-            )}
-          </td>
-        </tr>
-        <tr class="border-b border-gray-300">
-          <td colspan="7" class="border-r border-gray-300 p-2 text-left">
-            <div class="flex gap-2">
-              <p class="font-semibold mb-2">Amount Chargeable (in words):</p>
-              <p>
-                {toWords.convert(
+            {#if invoiceData.invoice?.state === sellerDetails.state}
+              <tr class="border-b border-gray-300 bg-gray-50">
+                <td class="border-r border-gray-300"></td>
+                <td class="p-1 border-r border-gray-300 text-right">CGST</td>
+                {#each Array.from({ length: 5 }) as _, i (i)}
+                  <td class="border-r border-gray-300"></td>
+                {/each}
+                <td class="p-1 text-right"
+                  >{invoiceData.items
+                    .reduce((sum, item) => sum + item.cgst_amount, 0)
+                    .toFixed(2)}</td
+                >
+              </tr>
+              <tr class="border-b border-gray-300 bg-gray-50">
+                <td class="border-r border-gray-300"></td>
+                <td class="p-1 border-r border-gray-300 text-right">SGST</td>
+                {#each Array.from({ length: 5 }) as _, i (i)}
+                  <td class="border-r border-gray-300"></td>
+                {/each}
+
+                <td class="p-1 text-right"
+                  >{invoiceData.items
+                    .reduce((sum, item) => sum + item.sgst_amount, 0)
+                    .toFixed(2)}</td
+                >
+              </tr>
+            {:else}
+              <tr class="border-b border-gray-300 bg-gray-50">
+                <td class="border-r border-gray-300"></td>
+                <td class="p-1 border-r border-gray-300 text-right">IGST</td>
+                {#each Array.from({ length: 5 }) as _, i (i)}
+                  <td class="border-r border-gray-300"></td>
+                {/each}
+                <td class="p-1 text-right"
+                  >{invoiceData.items
+                    .reduce((sum, item) => sum + item.igst_amount, 0)
+                    .toFixed(2)}</td
+                >
+              </tr>
+            {/if}
+            <tr class="border-b border-gray-300">
+              <td colspan="7" class="border-r border-gray-300 p-2 text-right font-semibold"
+                >Total</td
+              >
+              <td class="p-1 text-right font-semibold">
+                {formatter.format(
                   invoiceData.items.reduce((sum, item) => {
                     return (
                       sum + item.amount + (item.cgst_amount + item.sgst_amount + item.igst_amount)
                     )
                   }, 0)
                 )}
-              </p>
-            </div>
-          </td>
-          <td class="p-1 text-right font-semibold"> E. & O.E </td>
-        </tr>
-      </tbody>
-    </table>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="7" class="border-r border-gray-300 p-2 text-left">
+                <div class="flex gap-2">
+                  <p class="font-semibold mb-2">Amount Chargeable (in words):</p>
+                  <p>
+                    {toWords.convert(
+                      invoiceData.items.reduce((sum, item) => {
+                        return (
+                          sum +
+                          item.amount +
+                          (item.cgst_amount + item.sgst_amount + item.igst_amount)
+                        )
+                      }, 0)
+                    )}
+                  </p>
+                </div>
+              </td>
+              <td class="p-1 text-right font-semibold"> E. & O.E </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
     <div class="grid grid-cols-1 gap-4 mb-4">
-      <div class="border border-gray-300">
+      <div class="border w-full border-gray-300">
         <table class="w-full text-xs">
           <thead>
             <tr class="border-b border-gray-300">
@@ -403,16 +352,16 @@
       <div class="grid grid-cols-3 gap-3">
         <div class="p-3 border-r border-gray-300">
           <p class="font-semibold mb-2">Declaration</p>
-          <p>Goods once sold will not be taken back</p>
-          <p>
-            I/we hereby certify that my/our Registration Certificate under the GST Act, 2017 is in
-            force on the date on which the sale of the goods Sepcified in this Tax Invoice is made
-            by me/us and that the transacton of sale Covered by this Tax Invoice has - been effected
-            by me/us and it shall be accounted
-          </p>
-          <p>
-            For in the turnover of sale whicle filling of return and the due tax, if any payable on
-            the sale has been paid or shall be paid"
+          <p class="text-[0.6rem]">
+            Goods once sold will not be taken back
+            <br />
+            I/we hereby certify that my/our Registration Certificate under the GST Act, 2017 is in force
+            on the date on which the sale of the goods Sepcified in this Tax Invoice is made by me/us
+            and that the transacton of sale Covered by this Tax Invoice has - been effected by me/us
+            and it shall be accounted
+            <br />
+            For in the turnover of sale whicle filling of return and the due tax, if any payable on the
+            sale has been paid or shall be paid"
           </p>
         </div>
         <div class="p-3">
