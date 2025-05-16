@@ -9,6 +9,11 @@
     "name": "",
     "account_name": "",
     "account_number": "",
-    "ifsc_code": ""
+    "ifsc_code": "",
+    "type": ""
+  },
+  "upiDetails": {
+    "upi_id": "",
+    "payee_name": ""
   }
 }

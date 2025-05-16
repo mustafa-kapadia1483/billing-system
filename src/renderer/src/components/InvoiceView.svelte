@@ -4,9 +4,11 @@
   import html2pdf from 'html2pdf.js'
   import { ToWords } from 'to-words'
   import sellerDetails from '../config/seller.json'
+  import upiqr from 'upiqr'
 
   let { route } = $props()
   let invoiceData = $state(null)
+  // let upiQrCode = $state(null)
 
   onMount(async () => {
     if (route.result.path.params.id) {
@@ -82,12 +84,20 @@
   let totalSgstAmount = $derived(
     invoiceData.items?.reduce((acc, item) => acc + item.sgst_amount, 0)
   )
+
+  let upiQrCode = $derived(
+    upiqr({
+      payeeVPA: sellerDetails.upiDetails.upi_id,
+      payeeName: sellerDetails.upiDetails.payee_name,
+      transactionNote: invoiceData && `Payment for Invoice No ${invoiceData.invoice.invoice_number}`
+    })
+  )
 </script>
 
 <div class="flex justify-center gap-4 mb-4 print:hidden">
   <button
     class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 action-button"
-    on:click={downloadPDF}
+    onclick={downloadPDF}
   >
     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
       <path
@@ -100,7 +110,7 @@
   </button>
   <button
     class="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 action-button"
-    on:click={printInvoice}
+    onclick={printInvoice}
   >
     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
       <path
@@ -389,9 +399,9 @@
       </div>
     </div>
 
-    <div class="border border-gray-300 p-3 text-xs">
-      <div class="grid grid-cols-2">
-        <div>
+    <div class="border border-gray-300 text-xs">
+      <div class="grid grid-cols-3 gap-3">
+        <div class="p-3 border-r border-gray-300">
           <p class="font-semibold mb-2">Declaration</p>
           <p>Goods once sold will not be taken back</p>
           <p>
@@ -405,9 +415,44 @@
             the sale has been paid or shall be paid"
           </p>
         </div>
-        <div class="flex flex-col justify-between items-end">
-          <p class="font-semibold">for {sellerDetails.name}</p>
-          <p class="mt-8">Authorised Signatory</p>
+        <div class="p-3">
+          <p class="font-semibold mb-2">Bank Details:</p>
+          <ol class="appearance-none space-y-3">
+            <li class="flex gap-1">
+              <p class="font-semibold">Account Name:</p>
+              <p>{sellerDetails.bankDetails.account_name}</p>
+            </li>
+            <li class="flex gap-1">
+              <p class="font-semibold">Account Number:</p>
+              <p>{sellerDetails.bankDetails.account_number}</p>
+            </li>
+            <li class="flex gap-1">
+              <p class="font-semibold">IFSC:</p>
+              <p>{sellerDetails.bankDetails.ifsc_code}</p>
+            </li>
+            <li class="flex gap-1">
+              <p class="font-semibold">Account Type:</p>
+              <p>{sellerDetails.bankDetails.type}</p>
+            </li>
+            <li class="flex gap-1">
+              <p class="font-semibold">Bank:</p>
+              <p>{sellerDetails.bankDetails.name}</p>
+            </li>
+          </ol>
+        </div>
+        <div>
+          <div class="p-3 flex flex-col items-center">
+            <p class="font-semibold text-center">Scan to Pay via UPI</p>
+            {#await upiQrCode}
+              <p>Generating QR Code</p>
+            {:then upiQrCode}
+              <img src={upiQrCode.qr} class="max-w-40" alt="upi qr code scanner" />
+            {/await}
+          </div>
+          <div class="border border-r-0 border-gray-300 max-w-72 ml-auto p-2">
+            <p class="font-semibold">for {sellerDetails.name}</p>
+            <p class="mt-8">Authorised Signatory</p>
+          </div>
         </div>
       </div>
     </div>
