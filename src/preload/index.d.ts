@@ -6,6 +6,7 @@ declare global {
     api: {
       createCompany: (company: any) => Promise<number>
       getCompanies: () => Promise<any[]>
+      deleteCompany: (companyId: number) => Promise<number>
       createInvoice: (invoice: any) => Promise<number>
       getInvoices: () => Promise<any[]>
       getInvoiceDetails: (id: number) => Promise<any>

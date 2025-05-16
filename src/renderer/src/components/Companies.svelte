@@ -13,14 +13,18 @@
   })
 
   onMount(async () => {
-    companies = await window.api.getCompanies()
+    loadCompanies()
   })
 
-  async function handleSubmit(e: Event) {
+  async function loadCompanies(): Promise<void> {
+    companies = await window.api.getCompanies()
+  }
+
+  async function handleSubmit(e: Event): Promise<void> {
     e.preventDefault()
     await window.api.createCompany({ ...newCompany })
-    companies = await window.api.getCompanies()
-    toasts.success(`Companhy ${newCompany.name} created successfully`)
+    await loadCompanies()
+    toasts.success(`Company ${newCompany.name} created successfully`)
     newCompany = {
       name: '',
       gstin: '',
@@ -28,6 +32,16 @@
       address_line2: '',
       city: '',
       state: ''
+    }
+  }
+
+  async function deleteCompany(id: number, name: string): Promise<void> {
+    try {
+      await window.api.deleteCompany(id)
+      toasts.info(`Company ${name} deleted successfully`)
+      await loadCompanies()
+    } catch (error) {
+      toasts.error(error.message)
     }
   }
 </script>
@@ -181,10 +195,14 @@
               class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >Address</th
             >
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >Actions</th
+            >
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
-          {#each companies as company}
+          {#each companies as company (company.id)}
             <tr>
               <td class="px-6 py-4 whitespace-nowrap">{company.name}</td>
               <td class="px-6 py-4 whitespace-nowrap">{company.gstin}</td>
@@ -194,6 +212,14 @@
                   <br />{company.address_line2}
                 {/if}
                 <br />{company.city}, {company.state}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <button
+                  class="btn btn-danger text-sm bg-red-50 hover:bg-red-100 text-red-600 rounded transition-colors"
+                  onclick={() => deleteCompany(company.id, company.name)}
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           {/each}

@@ -16,6 +16,25 @@ export const dbUtils = {
     return result.lastInsertRowid
   },
 
+  deleteCompany: (companyId: number) => {
+    return db.transaction(() => {
+      // Check if company has any invoices
+      const hasInvoices = db
+        .prepare('SELECT 1 FROM invoices WHERE company_id = ? LIMIT 1')
+        .get(companyId)
+
+      if (hasInvoices) {
+        throw new Error('Cannot delete company with existing invoices')
+      }
+
+      // Delete the company
+      const deleteCompanyStmt = db.prepare('DELETE FROM companies WHERE id = ?')
+      const result = deleteCompanyStmt.run(companyId)
+
+      return result.changes > 0
+    })()
+  },
+
   getCompanies: () => {
     const stmt = db.prepare('SELECT * FROM companies ORDER BY name')
     return stmt.all()

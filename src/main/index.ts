@@ -50,6 +50,10 @@ app.whenReady().then(() => {
     return dbUtils.getCompanies()
   })
 
+  ipcMain.handle('delete-company', (_, companyId) => {
+    return dbUtils.deleteCompany(companyId)
+  })
+
   ipcMain.handle('create-invoice', async (_, invoice) => {
     return dbUtils.createInvoice(invoice)
   })
