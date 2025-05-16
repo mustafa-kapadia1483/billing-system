@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { toasts } from './Toast'
 
   let companies = $state([])
   let newCompany = $state({
@@ -19,6 +20,7 @@
     e.preventDefault()
     await window.api.createCompany({ ...newCompany })
     companies = await window.api.getCompanies()
+    toasts.success(`Companhy ${newCompany.name} created successfully`)
     newCompany = {
       name: '',
       gstin: '',

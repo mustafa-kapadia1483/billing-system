@@ -4,6 +4,7 @@
   import CreateInvoice from './components/CreateInvoice.svelte'
   import InvoiceList from './components/InvoiceList.svelte'
   import InvoiceView from './components/InvoiceView.svelte'
+  import { Toast } from './components/Toast'
 
   // Define routes
   const routes: RouteConfig = [
@@ -32,4 +33,5 @@
   <main class="max-w-7xl mx-auto py-6 px-4">
     <Router {routes} />
   </main>
+  <Toast />
 </div>

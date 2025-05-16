@@ -10,6 +10,7 @@ declare global {
       getInvoices: () => Promise<any[]>
       getInvoiceDetails: (id: number) => Promise<any>
       deleteInvoice: (id: number) => Promise<any>
+      downloadPdf: (fileName: string) => Promise<string>
     }
   }
 }

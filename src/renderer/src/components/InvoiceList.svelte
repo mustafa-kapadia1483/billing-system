@@ -2,6 +2,7 @@
   import { onMount } from 'svelte'
   import { goto } from '@mateothegreat/svelte5-router'
   import { formatter } from '../utils/formatting'
+  import { toasts } from './Toast'
 
   let invoices = $state([])
 
@@ -18,8 +19,9 @@
     goto(`/invoice/${id}`)
   }
 
-  async function deleteInvoice(id: number): Promise<void> {
+  async function deleteInvoice(id: number, invoice_number: string): Promise<void> {
     await window.api.deleteInvoice(id)
+    toasts.info(`Invoice No. ${invoice_number} deleted successfully`)
     await loadInvoices()
   }
 </script>
@@ -70,7 +72,7 @@
               </button>
               <button
                 class="btn btn-danger text-sm bg-red-50 hover:bg-red-100 text-red-600 rounded transition-colors"
-                onclick={() => deleteInvoice(invoice.id)}
+                onclick={() => deleteInvoice(invoice.id, invoice.invoice_number)}
               >
                 Delete
               </button>

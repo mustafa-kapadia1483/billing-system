@@ -4,6 +4,7 @@
   import { ToWords } from 'to-words'
   import sellerDetails from '../config/seller.json'
   import upiqr from 'upiqr'
+  import { toasts } from './Toast'
 
   let { route } = $props()
   let invoiceData = $state(null)
@@ -15,15 +16,15 @@
   })
 
   function printInvoice(): void {
-    // Print the document
     window.print()
   }
 
-  function downloadPDF(): void {
+  async function downloadPDF(): void {
     const date = new Date(invoiceData.invoice.date).toISOString().split('T')[0]
-    window.api.downloadPdf(
+    const downloadPath = await window.api.downloadPdf(
       `${invoiceData.invoice.name}-${invoiceData.invoice.invoice_number}-${date}.pdf`
     )
+    toasts.success(`Invoice downloaded: ${downloadPath}`, 0)
   }
 
   const toWords = new ToWords({

@@ -2,6 +2,8 @@
   import { onMount } from 'svelte'
   import { formatter } from './../utils/formatting'
   import sellerDetails from '../config/seller.json'
+  import { goto } from '@mateothegreat/svelte5-router'
+  import { toasts } from './Toast'
 
   let companies = $state([])
   let selectedCompany = $state(null)
@@ -89,7 +91,8 @@
     }
 
     await window.api.createInvoice(invoice)
-    window.location.href = '/invoices'
+    toasts.success(`Invoice No. ${invoiceNumber} created successfully`)
+    goto('/invoices')
   }
 </script>
 
