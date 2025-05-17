@@ -2,11 +2,11 @@
   interface StateSelectProps {
     value: string
     required: boolean
-    disabled: boolean
+    disabled?: boolean
     id: string
   }
 
-  let { value = $bindable(), required, id, disabled }: StateSelectProps = $props()
+  let { value = $bindable(), required, id, disabled = false }: StateSelectProps = $props()
 </script>
 
 <select
