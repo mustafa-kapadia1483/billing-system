@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { formatter } from './../utils/formatting'
+  import { formatter, toWords } from './../utils/formatting'
   import { ToWords } from 'to-words'
   import sellerDetails from '../config/seller.json'
   import upiqr from 'upiqr'
@@ -26,27 +26,6 @@
     )
     toasts.success(`Invoice downloaded: ${downloadPath}`, 0)
   }
-
-  const toWords = new ToWords({
-    localeCode: 'en-IN',
-    converterOptions: {
-      currency: true,
-      ignoreDecimal: false,
-      ignoreZeroCurrency: false,
-      doNotAddOnly: false,
-      currencyOptions: {
-        // can be used to override defaults for the selected locale
-        name: 'Rupee',
-        plural: 'Rupees',
-        symbol: '₹',
-        fractionalUnit: {
-          name: 'Paisa',
-          plural: 'Paise',
-          symbol: ''
-        }
-      }
-    }
-  })
 
   let totalTaxAmount = $derived(
     invoiceData.items?.reduce(
