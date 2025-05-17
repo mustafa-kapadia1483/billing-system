@@ -9,6 +9,8 @@ const api = {
   createInvoice: (invoice) => ipcRenderer.invoke('create-invoice', invoice),
   getInvoices: () => ipcRenderer.invoke('get-invoices'),
   getInvoiceDetails: (id: number) => ipcRenderer.invoke('get-invoice-details', id),
+  updateInvoicePaidStatus: (id: number, isPaid: boolean) =>
+    ipcRenderer.invoke('update-invoice-paid-status', id, isPaid),
   deleteInvoice: (id: number) => ipcRenderer.invoke('delete-invoice', id),
   downloadPdf: (fileName: string) => ipcRenderer.invoke('download-pdf', fileName)
 }

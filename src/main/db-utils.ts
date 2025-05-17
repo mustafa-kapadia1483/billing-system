@@ -151,5 +151,11 @@ export const dbUtils = {
       companyId
     )
     return result.changes > 0
+  },
+
+  updateInvoicePaidStatus: (invoiceId: number, isPaid: boolean) => {
+    const stmt = db.prepare('UPDATE invoices SET is_paid = ? WHERE id = ?')
+    const result = stmt.run(isPaid ? 1 : 0, invoiceId)
+    return result.changes > 0
   }
 }

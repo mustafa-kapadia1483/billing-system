@@ -24,6 +24,17 @@
     toasts.info(`Invoice No. ${invoice_number} deleted successfully`)
     await loadInvoices()
   }
+
+  async function togglePaid(invoice): Promise<void> {
+    if (invoice.is_paid) {
+      await window.api.updateInvoicePaidStatus(invoice.id, false)
+      toasts.success(`Invoice No. ${invoice.invoice_number} marked as Unpaid`)
+    } else {
+      await window.api.updateInvoicePaidStatus(invoice.id, true)
+      toasts.success(`Invoice No. ${invoice.invoice_number} marked as Paid`)
+    }
+    await loadInvoices()
+  }
 </script>
 
 <div class="bg-white shadow-lg rounded-xl p-6">
@@ -52,6 +63,9 @@
             >Amount</th
           >
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >Status</th
+          >
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
             >Actions</th
           >
         </tr>
@@ -66,7 +80,11 @@
             <td class="px-6 py-4 whitespace-nowrap">{invoice.company_name}</td>
             <td class="px-6 py-4 whitespace-nowrap">{invoice.gstin}</td>
             <td class="px-6 py-4 whitespace-nowrap">{formatter.format(invoice.total_amount)}</td>
+            <td class="px-6 py-4 whitespace-nowrap w-32">{invoice.is_paid ? 'Paid' : 'Unpaid'}</td>
             <td class="px-6 py-4 whitespace-nowrap space-x-2">
+              <button class="btn btn-secondary text-sm" onclick={() => togglePaid(invoice)}>
+                Mark as {invoice.is_paid ? 'Unpaid' : 'Paid'}
+              </button>
               <button class="btn btn-secondary text-sm" onclick={() => viewInvoice(invoice.id)}>
                 View
               </button>

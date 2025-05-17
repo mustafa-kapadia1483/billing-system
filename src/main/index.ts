@@ -70,6 +70,10 @@ app.whenReady().then(() => {
     return dbUtils.getInvoiceDetails(invoiceId)
   })
 
+  ipcMain.handle('update-invoice-paid-status', (_, invoiceId, isPaidStatus: boolean) => {
+    return dbUtils.updateInvoicePaidStatus(invoiceId, isPaidStatus)
+  })
+
   ipcMain.handle('delete-invoice', (_, invoiceId) => {
     return dbUtils.deleteInvoice(invoiceId)
   })

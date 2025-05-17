@@ -11,6 +11,7 @@ declare global {
       createInvoice: (invoice: any) => Promise<number>
       getInvoices: () => Promise<any[]>
       getInvoiceDetails: (id: number) => Promise<any>
+      updateInvoicePaidStatus: (id: number, isPaid: boolean) => Promise<any>
       deleteInvoice: (id: number) => Promise<any>
       downloadPdf: (fileName: string) => Promise<string>
     }

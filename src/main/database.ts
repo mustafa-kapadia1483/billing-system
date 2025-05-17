@@ -28,7 +28,7 @@ db.exec(`
     cgst_amount DECIMAL(10,2) NULL,
     sgst_amount DECIMAL(10,2) NULL,
     igst_amount DECIMAL(10,2) NULL,
-    tax_rate DECIMAL(10,0) NULL,
+    is_paid BOOLEAN NOT NULL DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (company_id) REFERENCES companies(id)
   );
