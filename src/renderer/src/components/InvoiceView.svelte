@@ -54,7 +54,7 @@
 
 <div class="flex justify-center gap-4 mb-4 print:hidden">
   <button
-    class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 action-button"
+    class="flex items-center gap-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 action-button"
     onclick={downloadPDF}
   >
     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
@@ -67,7 +67,7 @@
     Download PDF
   </button>
   <button
-    class="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 action-button"
+    class="flex items-center gap-1 px-4 py-2 text-sm font-medium bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 action-button"
     onclick={printInvoice}
   >
     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
@@ -83,18 +83,18 @@
 {#if invoiceData}
   <div
     id="invoice-content"
-    class="bg-white p-8 print:p-0 print:shadow-none w-[210mm] mx-auto text-sm"
+    class="bg-white p-8 print:p-0 print:shadow-none max-w-[210mm] mx-auto text-sm"
   >
     <h1 class="text-xl font-bold mb-4">Tax Invoice</h1>
 
-    <div class="grid grid-cols-[max-content_max-content] gap-2 text-xs mb-4">
+    <div class="grid grid-cols-[max-content_max-content] gap-1 text-xs mb-4">
       <p>Invoice No #</p>
       <p class="font-semibold">{invoiceData.invoice.invoice_number}</p>
       <p>Invoice Date</p>
       <p class="font-semibold">{new Date(invoiceData.invoice.date).toLocaleDateString('en-IN')}</p>
     </div>
 
-    <div class="grid grid-cols-2 gap-4 mb-4 w-full">
+    <div class="grid grid-cols-2 gap-4 w-full mb-4">
       <div class="border border-gray-300 p-3">
         <p class="font-semibold mb-2">Billed by</p>
         <p class="font-bold mb-1">{sellerDetails.name}</p>
@@ -108,7 +108,7 @@
           State Name: {sellerDetails.state}
         </p>
       </div>
-      <div class="border border-gray-300 p-3 mb-6 h-full">
+      <div class="border border-gray-300 p-3 h-full">
         <p class="font-semibold mb-2">Bill to</p>
         <p class="font-bold">{invoiceData.invoice.name}</p>
         <p class="text-xs leading-relaxed">
@@ -129,26 +129,26 @@
       >
         <thead>
           <tr>
-            <th class="p-2 text-left">Sr No.</th>
-            <th class="p-2 text-left">Description of Goods</th>
-            <th class="p-2 text-center">HSN/SAC</th>
-            <th class="p-2 text-center">Quantity</th>
-            <th class="p-2 text-right">Rate</th>
-            <th class="p-2 text-center">per</th>
-            <th class="p-2 text-center">Disc. %</th>
+            <th class="p-1 text-left">Sr No.</th>
+            <th class="p-1 text-left">Description of Goods</th>
+            <th class="p-1 text-center">HSN/SAC</th>
+            <th class="p-1 text-center">Quantity</th>
+            <th class="p-1 text-right">Rate</th>
+            <th class="p-1 text-center">per</th>
+            <th class="p-1 text-center">Disc. %</th>
             <th class="p-1 text-right">Amount</th>
           </tr>
         </thead>
         <tbody>
           {#each invoiceData.items as item, index (item.id)}
             <tr>
-              <td class="p-2">{index + 1}</td>
-              <td class="p-2">{item.description}</td>
-              <td class="p-2 text-center">{item.hsn_code || ''}</td>
-              <td class="p-2 text-center">{item.quantity} No</td>
-              <td class="p-2 text-right">{item.rate.toFixed(2)}</td>
-              <td class="p-2 text-center">No</td>
-              <td class="p-2 text-center">-</td>
+              <td class="p-1">{index + 1}</td>
+              <td class="p-1">{item.description}</td>
+              <td class="p-1 text-center">{item.hsn_code || ''}</td>
+              <td class="p-1 text-center">{item.quantity} No</td>
+              <td class="p-1 text-right">{item.rate.toFixed(2)}</td>
+              <td class="p-1 text-center">No</td>
+              <td class="p-1 text-center">-</td>
               <td class="p-1 text-right">{item.amount.toFixed(2)}</td>
             </tr>
           {/each}
@@ -187,7 +187,7 @@
             </tr>
           {/if}
           <tr>
-            <td colspan="7" class="p-2 text-right font-semibold">Total</td>
+            <td colspan="7" class="p-1 text-right font-semibold">Total</td>
             <td class="p-1 text-right font-semibold">
               {formatter.format(
                 invoiceData.items.reduce((sum, item) => {
@@ -199,21 +199,19 @@
             </td>
           </tr>
           <tr>
-            <td colspan="7" class="p-2 text-left">
-              <div class="flex gap-2 border-none">
-                <p class="font-semibold mb-2 border-none">Amount Chargeable (in words):</p>
-                <p class="border-none">
-                  {toWords.convert(
-                    invoiceData.items.reduce((sum, item) => {
-                      return (
-                        sum + item.amount + (item.cgst_amount + item.sgst_amount + item.igst_amount)
-                      )
-                    }, 0)
-                  )}
-                </p>
-              </div>
+            <td colspan="7" class="p-1 text-left">
+              <p class="border-none">
+                <span class="font-semibold border-none">Amount Chargeable (in words):</span>
+                {toWords.convert(
+                  invoiceData.items.reduce((sum, item) => {
+                    return (
+                      sum + item.amount + (item.cgst_amount + item.sgst_amount + item.igst_amount)
+                    )
+                  }, 0)
+                )}
+              </p>
             </td>
-            <td class="p-1 text-right font-semibold"> E. & O.E </td>
+            <td class="p-1 text-right font-semibold">E. & O.E</td>
           </tr>
         </tbody>
       </table>
@@ -270,10 +268,10 @@
           </tr>
           <tr>
             <td colspan="7" class="p-1 text-left">
-              <div class="flex gap-2 border-none">
-                <p class="font-semibold mb-2 border-none">Tax Amount (in words):</p>
-                <p class="border-none">{toWords.convert(totalTaxAmount)}</p>
-              </div>
+              <p class="border-none">
+                <span class="font-semibold border-none">Tax Amount (in words):</span>
+                {toWords.convert(totalTaxAmount)}
+              </p>
             </td>
           </tr>
         </tbody>
@@ -330,7 +328,7 @@
               <img src={upiQrCode.qr} class="max-w-40" alt="upi qr code scanner" />
             {/await}
           </div>
-          <div class="border border-r-0 border-gray-300 max-w-72 ml-auto p-2">
+          <div class="border border-r-0 border-gray-300 max-w-72 ml-auto p-1">
             <p class="font-semibold">for {sellerDetails.name}</p>
             <p class="mt-8">Authorised Signatory</p>
           </div>
@@ -345,7 +343,7 @@
 <style>
   @media print {
     @page {
-      margin: 1cm;
+      margin: 0cm;
       size: A4;
     }
   }
