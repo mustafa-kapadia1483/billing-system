@@ -50,6 +50,10 @@ app.whenReady().then(() => {
     return dbUtils.getCompanies()
   })
 
+  ipcMain.handle('edit-company', (_, companyId, company) => {
+    return dbUtils.editCompany(companyId, company)
+  })
+
   ipcMain.handle('delete-company', (_, companyId) => {
     return dbUtils.deleteCompany(companyId)
   })

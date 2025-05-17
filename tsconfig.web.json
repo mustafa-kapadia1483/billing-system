@@ -7,6 +7,10 @@
     "src/preload/*.d.ts"
   ],
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+     "$lib/*": ["src/lib/*"]   
+    },
     "verbatimModuleSyntax": true,
     "useDefineForClassFields": true,
     "strict": false,

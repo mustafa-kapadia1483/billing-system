@@ -1,8 +1,11 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { toasts } from './Toast'
+  import StateSelect from '$lib/state-select.svelte'
 
   let companies = $state([])
+  let editingCompany = $state(null)
+  let isEditModalOpen = $state(false)
   let newCompany = $state({
     name: '',
     gstin: '',
@@ -33,6 +36,24 @@
       city: '',
       state: ''
     }
+  }
+
+  function openEditModal(company) {
+    editingCompany = { ...company }
+    isEditModalOpen = true
+  }
+
+  function closeEditModal() {
+    editingCompany = null
+    isEditModalOpen = false
+  }
+
+  async function handleEdit(e: Event): Promise<void> {
+    e.preventDefault()
+    await window.api.editCompany(editingCompany.id, $state.snapshot(editingCompany))
+    await loadCompanies()
+    toasts.success(`Company ${editingCompany.name} updated successfully`)
+    closeEditModal()
   }
 
   async function deleteCompany(id: number, name: string): Promise<void> {
@@ -121,59 +142,15 @@
               required
             />
           </div>
+          <!-- Replace the state select in the new company form -->
           <div class="group">
             <label for="state" class="block text-sm font-semibold text-gray-800 mb-1.5">State</label
             >
-            <select
-              id="state"
-              bind:value={newCompany.state}
-              class="input w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors appearance-none"
-              required
-            >
-              <option value="" class="text-gray-500">Select a state</option>
-              <option value="Andhra Pradesh">Andhra Pradesh</option>
-              <option value="Arunachal Pradesh">Arunachal Pradesh</option>
-              <option value="Assam">Assam</option>
-              <option value="Bihar">Bihar</option>
-              <option value="Chhattisgarh">Chhattisgarh</option>
-              <option value="Goa">Goa</option>
-              <option value="Gujarat">Gujarat</option>
-              <option value="Haryana">Haryana</option>
-              <option value="Himachal Pradesh">Himachal Pradesh</option>
-              <option value="Jharkhand">Jharkhand</option>
-              <option value="Karnataka">Karnataka</option>
-              <option value="Kerala">Kerala</option>
-              <option value="Madhya Pradesh">Madhya Pradesh</option>
-              <option value="Maharashtra">Maharashtra</option>
-              <option value="Manipur">Manipur</option>
-              <option value="Meghalaya">Meghalaya</option>
-              <option value="Mizoram">Mizoram</option>
-              <option value="Nagaland">Nagaland</option>
-              <option value="Odisha">Odisha</option>
-              <option value="Punjab">Punjab</option>
-              <option value="Rajasthan">Rajasthan</option>
-              <option value="Sikkim">Sikkim</option>
-              <option value="Tamil Nadu">Tamil Nadu</option>
-              <option value="Telangana">Telangana</option>
-              <option value="Tripura">Tripura</option>
-              <option value="Uttar Pradesh">Uttar Pradesh</option>
-              <option value="Uttarakhand">Uttarakhand</option>
-              <option value="West Bengal">West Bengal</option>
-              <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
-              <option value="Chandigarh">Chandigarh</option>
-              <option value="Dadra and Nagar Haveli and Daman and Diu"
-                >Dadra and Nagar Haveli and Daman and Diu</option
-              >
-              <option value="Delhi">Delhi</option>
-              <option value="Jammu and Kashmir">Jammu and Kashmir</option>
-              <option value="Ladakh">Ladakh</option>
-              <option value="Lakshadweep">Lakshadweep</option>
-              <option value="Puducherry">Puducherry</option>
-            </select>
+            <StateSelect id="state" bind:value={newCompany.state} required />
           </div>
         </div>
-        <button type="submit" class="btn btn-primary">Add Company</button>
       </div>
+      <button type="submit" class="btn btn-primary">Add Company</button>
     </form>
   </div>
 
@@ -213,7 +190,13 @@
                 {/if}
                 <br />{company.city}, {company.state}
               </td>
-              <td class="px-6 py-4 whitespace-nowrap">
+              <td class="px-6 py-4 whitespace-nowrap space-x-2">
+                <button
+                  class="btn btn-secondary text-sm bg-gray-50 hover:bg-gray-100 text-gray-600 rounded transition-colors"
+                  onclick={() => openEditModal(company)}
+                >
+                  Edit
+                </button>
                 <button
                   class="btn btn-danger text-sm bg-red-50 hover:bg-red-100 text-red-600 rounded transition-colors"
                   onclick={() => deleteCompany(company.id, company.name)}
@@ -228,3 +211,116 @@
     </div>
   </div>
 </div>
+
+{#if isEditModalOpen}
+  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+        <h3 class="text-xl font-semibold text-gray-800">Edit Company</h3>
+        <button
+          class="text-gray-400 hover:text-gray-500 focus:outline-none"
+          onclick={closeEditModal}
+        >
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <form onsubmit={handleEdit} class="p-6 space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="group">
+            <label for="edit-name" class="block text-sm font-medium text-gray-700 mb-1"
+              >Company Name</label
+            >
+            <input
+              type="text"
+              id="edit-name"
+              bind:value={editingCompany.name}
+              class="input w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
+              required
+            />
+          </div>
+          <div class="group">
+            <label for="edit-gstin" class="block text-sm font-medium text-gray-700 mb-1"
+              >GSTIN</label
+            >
+            <input
+              type="text"
+              id="edit-gstin"
+              bind:value={editingCompany.gstin}
+              class="input w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors font-mono uppercase"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div class="group">
+            <label for="edit-address1" class="block text-sm font-medium text-gray-700 mb-1"
+              >Address Line 1</label
+            >
+            <input
+              type="text"
+              id="edit-address1"
+              bind:value={editingCompany.address_line1}
+              class="input w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
+              required
+            />
+          </div>
+          <div class="group">
+            <label for="edit-address2" class="block text-sm font-medium text-gray-700 mb-1"
+              >Address Line 2</label
+            >
+            <input
+              type="text"
+              id="edit-address2"
+              bind:value={editingCompany.address_line2}
+              class="input w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
+            />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="group">
+            <label for="edit-city" class="block text-sm font-medium text-gray-700 mb-1">City</label>
+            <input
+              type="text"
+              id="edit-city"
+              bind:value={editingCompany.city}
+              class="input w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
+              required
+            />
+          </div>
+          <div class="group">
+            <label for="edit-state" class="block text-sm font-medium text-gray-700 mb-1"
+              >State</label
+            >
+            <StateSelect id="edit-state" bind:value={editingCompany.state} required disabled />
+          </div>
+        </div>
+
+        <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+          <button
+            type="button"
+            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            onclick={closeEditModal}
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+{/if}

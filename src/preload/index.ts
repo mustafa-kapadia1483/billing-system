@@ -4,6 +4,7 @@ import { electronAPI } from '@electron-toolkit/preload'
 const api = {
   createCompany: (company) => ipcRenderer.invoke('create-company', company),
   getCompanies: () => ipcRenderer.invoke('get-companies'),
+  editCompany: (id: number, company) => ipcRenderer.invoke('edit-company', id, company),
   deleteCompany: (id: number) => ipcRenderer.invoke('delete-company', id),
   createInvoice: (invoice) => ipcRenderer.invoke('create-invoice', invoice),
   getInvoices: () => ipcRenderer.invoke('get-invoices'),

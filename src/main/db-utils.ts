@@ -134,5 +134,22 @@ export const dbUtils = {
 
       return result.changes > 0
     })()
+  },
+  editCompany: (companyId: number, company: any) => {
+    const stmt = db.prepare(`
+      UPDATE companies 
+      SET name = ?, gstin = ?, address_line1 = ?, address_line2 = ?, city = ?, state = ?
+      WHERE id = ?
+    `)
+    const result = stmt.run(
+      company.name,
+      company.gstin,
+      company.address_line1,
+      company.address_line2,
+      company.city,
+      company.state,
+      companyId
+    )
+    return result.changes > 0
   }
 }
