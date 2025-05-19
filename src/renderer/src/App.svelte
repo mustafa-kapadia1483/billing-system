@@ -4,7 +4,7 @@
   import CreateInvoice from './components/CreateInvoice.svelte'
   import InvoiceList from './components/InvoiceList.svelte'
   import InvoiceView from './components/InvoiceView.svelte'
-  import { Toast } from './components/Toast'
+  import { Toast } from '$lib/Toast'
 
   // Define routes
   const routes: RouteConfig = [

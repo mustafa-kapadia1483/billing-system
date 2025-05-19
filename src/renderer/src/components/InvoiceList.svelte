@@ -2,7 +2,7 @@
   import { onMount } from 'svelte'
   import { goto } from '@mateothegreat/svelte5-router'
   import { formatter } from '../utils/formatting'
-  import { toasts } from './Toast'
+  import { toasts } from '$lib/Toast'
 
   let invoices = $state([])
   let companies = $state([])

@@ -3,7 +3,7 @@
   import { formatter } from './../utils/formatting'
   import sellerDetails from '../config/seller.json'
   import { goto } from '@mateothegreat/svelte5-router'
-  import { toasts } from './Toast'
+  import { toasts } from '$lib/Toast'
 
   let companies = $state([])
   let selectedCompany = $state(null)

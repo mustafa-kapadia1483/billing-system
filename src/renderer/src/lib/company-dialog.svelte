@@ -1,6 +1,6 @@
 <script lang="ts">
   import StateSelect from './state-select.svelte'
-  import { toasts } from '../components/Toast'
+  import { toasts } from '$lib/Toast'
 
   interface Props {
     isOpen: boolean

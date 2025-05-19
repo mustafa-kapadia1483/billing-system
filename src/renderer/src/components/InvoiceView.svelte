@@ -4,7 +4,7 @@
   import { ToWords } from 'to-words'
   import sellerDetails from '../config/seller.json'
   import upiqr from 'upiqr'
-  import { toasts } from './Toast'
+  import { toasts } from '$lib/Toast'
 
   let { route } = $props()
   let invoiceData = $state(null)

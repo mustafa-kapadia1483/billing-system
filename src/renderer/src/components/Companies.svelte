@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { toasts } from './Toast'
+  import { toasts } from '$lib/Toast'
   import CompanyDialog from '$lib/company-dialog.svelte'
 
   let companies = $state([])
