@@ -236,5 +236,104 @@ export const dbUtils = {
     const stmt = db.prepare('UPDATE invoices SET is_paid = ? WHERE id = ?')
     const result = stmt.run(isPaid ? 1 : 0, invoiceId)
     return result.changes > 0
+  },
+
+  createInventoryItem: (item: any) => {
+    const stmt = db.prepare(`
+      INSERT INTO inventory (name, description, hsn_code, rate, tax_rate)
+      VALUES (?, ?, ?, ?, ?)
+    `)
+    const result = stmt.run(item.name, item.description, item.hsn_code, item.rate, item.tax_rate)
+    return result.lastInsertRowid
+  },
+
+  getInventory: (
+    options: {
+      name?: string
+      hsn_code?: string
+      minRate?: number
+      maxRate?: number
+      tax_rate?: number
+      sortBy?: string
+      sortOrder?: 'asc' | 'desc'
+      limit?: number
+      offset?: number
+    } = {}
+  ) => {
+    let query = 'SELECT * FROM inventory WHERE 1=1'
+    const params: any[] = []
+
+    if (options.name) {
+      query += ' AND name LIKE ?'
+      params.push(`%${options.name}%`)
+    }
+
+    if (options.hsn_code) {
+      query += ' AND hsn_code LIKE ?'
+      params.push(`%${options.hsn_code}%`)
+    }
+
+    if (options.minRate !== undefined) {
+      query += ' AND rate >= ?'
+      params.push(options.minRate)
+    }
+
+    if (options.maxRate !== undefined) {
+      query += ' AND rate <= ?'
+      params.push(options.maxRate)
+    }
+
+    if (options.tax_rate !== undefined) {
+      query += ' AND tax_rate = ?'
+      params.push(options.tax_rate)
+    }
+
+    // Sorting
+    const validSortColumns = ['name', 'rate', 'tax_rate', 'created_at']
+    const sortBy = validSortColumns.includes(options.sortBy || '') ? options.sortBy : 'name'
+    const sortOrder = options.sortOrder === 'asc' ? 'ASC' : 'DESC'
+    query += ` ORDER BY ${sortBy} ${sortOrder}`
+
+    // Pagination
+    if (options.limit !== undefined) {
+      query += ' LIMIT ?'
+      params.push(options.limit)
+
+      if (options.offset !== undefined) {
+        query += ' OFFSET ?'
+        params.push(options.offset)
+      }
+    }
+
+    const stmt = db.prepare(query)
+    return stmt.all(...params)
+  },
+
+  getInventoryItem: (id: number) => {
+    const stmt = db.prepare('SELECT * FROM inventory WHERE id = ?')
+    return stmt.get(id)
+  },
+
+  updateInventoryItem: (id: number, item: any) => {
+    const stmt = db.prepare(`
+      UPDATE inventory 
+      SET name = ?, description = ?, hsn_code = ?, rate = ?, tax_rate = ?, updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `)
+    const result = stmt.run(
+      item.name,
+      item.description,
+      item.hsn_code,
+      item.rate,
+      item.tax_rate,
+      id
+    )
+    return result.changes > 0
+  },
+
+  deleteInventoryItem: (id: number) => {
+    const stmt = db.prepare('DELETE FROM inventory WHERE id = ?')
+    const result = stmt.run(id)
+    return result.changes > 0
   }
 }

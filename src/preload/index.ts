@@ -15,7 +15,13 @@ const api = {
   downloadPdf: (fileName: string) => ipcRenderer.invoke('download-pdf', fileName),
   getGstCaptcha: () => ipcRenderer.invoke('get-gst-capctha'),
   fetchGstDetails: (gst_number: string, captcha: string, captcha_cookie: string) =>
-    ipcRenderer.invoke('fetch-gst-details', gst_number, captcha, captcha_cookie)
+    ipcRenderer.invoke('fetch-gst-details', gst_number, captcha, captcha_cookie),
+  // Inventory Management
+  createInventoryItem: (item) => ipcRenderer.invoke('create-inventory-item', item),
+  getInventory: (options) => ipcRenderer.invoke('get-inventory', options),
+  getInventoryItem: (id: number) => ipcRenderer.invoke('get-inventory-item', id),
+  updateInventoryItem: (id: number, item) => ipcRenderer.invoke('update-inventory-item', id, item),
+  deleteInventoryItem: (id: number) => ipcRenderer.invoke('delete-inventory-item', id)
 }
 
 if (process.contextIsolated) {

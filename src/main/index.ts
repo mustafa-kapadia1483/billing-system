@@ -105,6 +105,27 @@ app.whenReady().then(() => {
     }
   })
 
+  // Inventory Management
+  ipcMain.handle('create-inventory-item', async (_, item) => {
+    return dbUtils.createInventoryItem(item)
+  })
+
+  ipcMain.handle('get-inventory', async (_, filters) => {
+    return dbUtils.getInventory(filters)
+  })
+
+  ipcMain.handle('get-inventory-item', async (_, id) => {
+    return dbUtils.getInventoryItem(id)
+  })
+
+  ipcMain.handle('update-inventory-item', async (_, id, item) => {
+    return dbUtils.updateInventoryItem(id, item)
+  })
+
+  ipcMain.handle('delete-inventory-item', async (_, id) => {
+    return dbUtils.deleteInventoryItem(id)
+  })
+
   createWindow()
 
   app.on('activate', function () {

@@ -5,6 +5,7 @@
   import InvoiceList from './components/InvoiceList.svelte'
   import InvoiceView from './components/InvoiceView.svelte'
   import { Toast } from '$lib/Toast'
+  import Inventory from './components/Inventory.svelte'
 
   // Define routes
   const routes: RouteConfig = [
@@ -12,6 +13,7 @@
     { path: '/companies', component: Companies },
     { path: '/create-invoice', component: CreateInvoice },
     { path: '/invoices', component: InvoiceList },
+    { path: '/inventory', component: Inventory },
     { path: '/invoice/(?<id>.*)', component: InvoiceView }
   ]
 
@@ -75,6 +77,11 @@
             use:route={options}
             href="/companies"
             class="transition-all duration-200 ease-in-out px-3 py-2">Companies</a
+          >
+          <a
+            use:route={options}
+            href="/inventory"
+            class="transition-all duration-200 ease-in-out px-3 py-2">Inventory</a
           >
           <a
             use:route={options}

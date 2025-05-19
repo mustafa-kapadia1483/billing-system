@@ -20,6 +20,37 @@ declare global {
         captcha: string,
         captcha_cookie: string
       ) => Promise<object>
+      // Inventory Management
+      createInventoryItem: (item: {
+        name: string
+        description?: string
+        hsn_code: string
+        rate: number
+        tax_rate: number
+      }) => Promise<number>
+      getInventory: (filters?: {
+        name?: string
+        hsn_code?: string
+        minRate?: number
+        maxRate?: number
+        tax_rate?: number
+        sortBy?: string
+        sortOrder?: 'asc' | 'desc'
+        page?: number
+        limit?: number
+      }) => Promise<any[]>
+      getInventoryItem: (id: number) => Promise<any>
+      updateInventoryItem: (
+        id: number,
+        item: {
+          name?: string
+          description?: string
+          hsn_code?: string
+          rate?: number
+          tax_rate?: number
+        }
+      ) => Promise<any>
+      deleteInventoryItem: (id: number) => Promise<any>
     }
   }
 }
