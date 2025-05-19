@@ -114,8 +114,11 @@
   <form onsubmit={handleSubmit} class="space-y-6">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
       <div class="group">
-        <label class="block text-sm font-semibold text-gray-800 mb-1.5">Invoice Number</label>
+        <label for="invoice-number" class="block text-sm font-semibold text-gray-800 mb-1.5">
+          Invoice Number
+        </label>
         <input
+          id="invoice-number"
           type="text"
           bind:value={invoiceNumber}
           class="input w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
@@ -123,8 +126,11 @@
         />
       </div>
       <div class="group">
-        <label class="block text-sm font-semibold text-gray-800 mb-1.5">Date</label>
+        <label for="invoice-date" class="block text-sm font-semibold text-gray-800 mb-1.5">
+          Date
+        </label>
         <input
+          id="invoice-date"
           type="date"
           bind:value={invoiceDate}
           class="input w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
@@ -132,8 +138,11 @@
         />
       </div>
       <div class="group">
-        <label class="block text-sm font-semibold text-gray-800 mb-1.5">Company</label>
+        <label for="company" class="block text-sm font-semibold text-gray-800 mb-1.5">
+          Company
+        </label>
         <select
+          id="company"
           bind:value={selectedCompany}
           onchange={handleCompanyChange}
           class="input w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors appearance-none"
@@ -172,8 +181,11 @@
           class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end bg-gray-50 p-4 rounded-lg border border-gray-200"
         >
           <div class="md:col-span-4">
-            <label class="block text-sm font-semibold text-gray-800 mb-1.5">Description</label>
+            <label for="description-${i}" class="block text-sm font-semibold text-gray-800 mb-1.5"
+              >Description</label
+            >
             <input
+              id="description-${i}"
               type="text"
               bind:value={item.description}
               class="input w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
@@ -181,8 +193,11 @@
             />
           </div>
           <div class="md:col-span-1">
-            <label class="block text-sm font-semibold text-gray-800 mb-1.5">HSN/SAC</label>
+            <label for="hsn-${i}" class="block text-sm font-semibold text-gray-800 mb-1.5">
+              HSN/SAC
+            </label>
             <input
+              id="hsn-${i}"
               type="text"
               bind:value={item.hsn_code}
               class="input w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
@@ -190,8 +205,11 @@
             />
           </div>
           <div class="md:col-1">
-            <label class="block text-sm font-semibold text-gray-800 mb-1.5">Quantity</label>
+            <label for="quantity-${i}" class="block text-sm font-semibold text-gray-800 mb-1.5">
+              Quantity
+            </label>
             <input
+              id="quantity-${i}"
               type="number"
               bind:value={item.quantity}
               oninput={() => updateItemAmount(i)}
@@ -201,12 +219,17 @@
             />
           </div>
           <div class="md:col-1">
-            <label class="block text-sm font-semibold text-gray-800 mb-1.5">Per</label>
-            <UnitSelect bind:value={item.per} required />
+            <label for="per-${i}" class="block text-sm font-semibold text-gray-800 mb-1.5">
+              Per
+            </label>
+            <UnitSelect id="per-${i}" bind:value={item.per} required />
           </div>
           <div class="md:col-span-2">
-            <label class="block text-sm font-semibold text-gray-800 mb-1.5">Rate</label>
+            <label for="rate-${i}" class="block text-sm font-semibold text-gray-800 mb-1.5">
+              Rate
+            </label>
             <input
+              id="rate-${i}"
               type="number"
               bind:value={item.rate}
               oninput={() => updateItemAmount(i)}
@@ -217,8 +240,11 @@
             />
           </div>
           <div class="md:col-span-1">
-            <label class="block text-sm font-semibold text-gray-800 mb-1.5">Tax Rate</label>
+            <label for="tax-rate-${i}" class="block text-sm font-semibold text-gray-800 mb-1.5"
+              >Tax Rate</label
+            >
             <select
+              id="tax-rate-${i}"
               bind:value={item.tax_rate}
               onchange={() => updateItemAmount(i)}
               class="input w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors appearance-none"
@@ -231,8 +257,11 @@
             </select>
           </div>
           <div class="md:col-span-2">
-            <label class="block text-sm font-semibold text-gray-800 mb-1.5">Amount</label>
+            <label for="amount-${i}" class="block text-sm font-semibold text-gray-800 mb-1.5">
+              Amount
+            </label>
             <input
+              id="amount-${i}"
               type="number"
               value={item.amount}
               class="input w-full px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-lg"
