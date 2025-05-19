@@ -62,8 +62,8 @@ app.whenReady().then(() => {
     return dbUtils.createInvoice(invoice)
   })
 
-  ipcMain.handle('get-invoices', () => {
-    return dbUtils.getInvoices()
+  ipcMain.handle('get-invoices', (_, options) => {
+    return dbUtils.getInvoices(options)
   })
 
   ipcMain.handle('get-invoice-details', (_, invoiceId) => {

@@ -89,14 +89,91 @@ export const dbUtils = {
     return result
   },
 
-  getInvoices: () => {
-    const stmt = db.prepare(`
+  getInvoices: (
+    options: {
+      companyId?: number
+      isPaid?: boolean
+      fromDate?: string
+      toDate?: string
+      minAmount?: number
+      maxAmount?: number
+      invoiceNumber?: string
+      sortBy?: string
+      sortOrder?: 'asc' | 'desc'
+      limit?: number
+      offset?: number
+    } = {}
+  ) => {
+    let query = `
       SELECT i.*, c.name as company_name, c.gstin
       FROM invoices i
       JOIN companies c ON i.company_id = c.id
-      ORDER BY i.date DESC
-    `)
-    return stmt.all()
+      WHERE 1=1
+    `
+    const params: any[] = []
+
+    // Apply filters if provided
+    if (options.companyId !== undefined) {
+      query += ' AND i.company_id = ?'
+      params.push(options.companyId)
+    }
+
+    if (options.isPaid !== undefined) {
+      query += ' AND i.is_paid = ?'
+      params.push(options.isPaid ? 1 : 0)
+    }
+
+    if (options.fromDate) {
+      query += ' AND i.date >= ?'
+      params.push(options.fromDate)
+    }
+
+    if (options.toDate) {
+      query += ' AND i.date <= ?'
+      params.push(options.toDate)
+    }
+
+    if (options.minAmount !== undefined) {
+      query += ' AND i.total_amount >= ?'
+      params.push(options.minAmount)
+    }
+
+    if (options.maxAmount !== undefined) {
+      query += ' AND i.total_amount <= ?'
+      params.push(options.maxAmount)
+    }
+
+    if (options.invoiceNumber) {
+      query += ' AND i.invoice_number LIKE ?'
+      params.push(`%${options.invoiceNumber}%`)
+    }
+
+    // Sorting
+    const validSortColumns = ['date', 'invoice_number', 'total_amount', 'company_name', 'is_paid']
+    const sortBy = validSortColumns.includes(options.sortBy || '') ? options.sortBy : 'date'
+
+    const sortOrder = options.sortOrder === 'asc' ? 'ASC' : 'DESC'
+
+    // Handle special case for company_name which is from the joined table
+    if (sortBy === 'company_name') {
+      query += ` ORDER BY c.name ${sortOrder}`
+    } else {
+      query += ` ORDER BY i.${sortBy} ${sortOrder}`
+    }
+
+    // Pagination
+    if (options.limit !== undefined) {
+      query += ' LIMIT ?'
+      params.push(options.limit)
+
+      if (options.offset !== undefined) {
+        query += ' OFFSET ?'
+        params.push(options.offset)
+      }
+    }
+
+    const stmt = db.prepare(query)
+    return stmt.all(...params)
   },
 
   getInvoiceDetails: (invoiceId: number) => {

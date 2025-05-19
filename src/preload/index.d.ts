@@ -9,7 +9,7 @@ declare global {
       editCompany: (companyId, company) => Promise<any[]>
       deleteCompany: (companyId: number) => Promise<number>
       createInvoice: (invoice: any) => Promise<number>
-      getInvoices: () => Promise<any[]>
+      getInvoices: (options) => Promise<any[]>
       getInvoiceDetails: (id: number) => Promise<any>
       updateInvoicePaidStatus: (id: number, isPaid: boolean) => Promise<any>
       deleteInvoice: (id: number) => Promise<any>
