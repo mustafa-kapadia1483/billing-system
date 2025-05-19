@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { goto } from '@mateothegreat/svelte5-router'
-  import { formatter } from '../utils/formatting'
+  import { formatter } from '$lib/utils/formatting'
   import { toasts } from '$lib/Toast'
 
   let invoices = $state([])

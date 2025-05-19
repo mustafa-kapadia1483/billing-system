@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { formatter } from './../utils/formatting'
+  import { formatter } from '$lib/utils/formatting'
   import sellerDetails from '../config/seller.json'
   import { goto } from '@mateothegreat/svelte5-router'
   import { toasts } from '$lib/Toast'

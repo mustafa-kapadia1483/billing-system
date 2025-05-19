@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { formatter, toWords } from './../utils/formatting'
+  import { formatter, toWords } from '$lib/utils/formatting'
   import { ToWords } from 'to-words'
   import sellerDetails from '../config/seller.json'
   import upiqr from 'upiqr'
