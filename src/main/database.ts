@@ -39,6 +39,7 @@ db.exec(`
     description TEXT NOT NULL,
     hsn_code TEXT,
     quantity INTEGER NOT NULL,
+    per TEXT DEFAULT 'PCS',
     rate DECIMAL(10,2) NOT NULL,
     amount DECIMAL(10,2) NOT NULL,
     tax_rate DECIMAL(10,2) DEFAULT 18.0,

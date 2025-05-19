@@ -4,6 +4,7 @@
   import sellerDetails from '../config/seller.json'
   import { goto } from '@mateothegreat/svelte5-router'
   import { toasts } from '$lib/Toast'
+  import UnitSelect from '$lib/unit-select.svelte'
 
   let companies = $state([])
   let selectedCompany = $state(null)
@@ -18,7 +19,8 @@
       tax_rate: 18,
       cgst_amount: 0,
       sgst_amount: 0,
-      igst_amount: 0
+      igst_amount: 0,
+      per: 'PCS'
     }
   ])
   let invoiceNumber = $state('')
@@ -62,7 +64,8 @@
       tax_rate: 18,
       cgst_amount: 0,
       sgst_amount: 0,
-      igst_amount: 0
+      igst_amount: 0,
+      per: 'PCS'
     })
   }
 
@@ -177,7 +180,7 @@
               required
             />
           </div>
-          <div class="md:col-span-2">
+          <div class="md:col-span-1">
             <label class="block text-sm font-semibold text-gray-800 mb-1.5">HSN/SAC</label>
             <input
               type="text"
@@ -196,6 +199,10 @@
               min="1"
               required
             />
+          </div>
+          <div class="md:col-1">
+            <label class="block text-sm font-semibold text-gray-800 mb-1.5">Per</label>
+            <UnitSelect bind:value={item.per} required />
           </div>
           <div class="md:col-span-2">
             <label class="block text-sm font-semibold text-gray-800 mb-1.5">Rate</label>

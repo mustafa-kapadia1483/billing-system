@@ -145,9 +145,9 @@
               <td class="p-1">{index + 1}</td>
               <td class="p-1">{item.description}</td>
               <td class="p-1 text-center">{item.hsn_code || ''}</td>
-              <td class="p-1 text-center">{item.quantity} No</td>
+              <td class="p-1 text-center">{item.quantity} {item.per}</td>
               <td class="p-1 text-right">{item.rate.toFixed(2)}</td>
-              <td class="p-1 text-center">No</td>
+              <td class="p-1 text-center">{item.per}</td>
               <td class="p-1 text-center">-</td>
               <td class="p-1 text-right">{item.amount.toFixed(2)}</td>
             </tr>
