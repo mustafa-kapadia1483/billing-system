@@ -3,6 +3,7 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { dbUtils } from './db-utils'
+import { getGstCaptcha, fetchGstDetails } from './gst-fetch'
 import fs from 'fs'
 
 function createWindow(): void {
@@ -77,6 +78,17 @@ app.whenReady().then(() => {
   ipcMain.handle('delete-invoice', (_, invoiceId) => {
     return dbUtils.deleteInvoice(invoiceId)
   })
+
+  ipcMain.handle('get-gst-capctha', () => {
+    return getGstCaptcha()
+  })
+
+  ipcMain.handle(
+    'fetch-gst-details',
+    (_, gst_number: string, captcha: string, captcha_cookie: string) => {
+      return fetchGstDetails(gst_number, captcha, captcha_cookie)
+    }
+  )
 
   ipcMain.handle('download-pdf', async (_, fileName) => {
     const downloadsPath = app.getPath('downloads')

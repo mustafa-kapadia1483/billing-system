@@ -12,7 +12,10 @@ const api = {
   updateInvoicePaidStatus: (id: number, isPaid: boolean) =>
     ipcRenderer.invoke('update-invoice-paid-status', id, isPaid),
   deleteInvoice: (id: number) => ipcRenderer.invoke('delete-invoice', id),
-  downloadPdf: (fileName: string) => ipcRenderer.invoke('download-pdf', fileName)
+  downloadPdf: (fileName: string) => ipcRenderer.invoke('download-pdf', fileName),
+  getGstCaptcha: () => ipcRenderer.invoke('get-gst-capctha'),
+  fetchGstDetails: (gst_number: string, captcha: string, captcha_cookie: string) =>
+    ipcRenderer.invoke('fetch-gst-details', gst_number, captcha, captcha_cookie)
 }
 
 if (process.contextIsolated) {

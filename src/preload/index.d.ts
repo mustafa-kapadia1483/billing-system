@@ -14,6 +14,12 @@ declare global {
       updateInvoicePaidStatus: (id: number, isPaid: boolean) => Promise<any>
       deleteInvoice: (id: number) => Promise<any>
       downloadPdf: (fileName: string) => Promise<string>
+      getGstCaptcha: () => Promise<object>
+      fetchGstDetails: (
+        gst_number: string,
+        captcha: string,
+        captcha_cookie: string
+      ) => Promise<object>
     }
   }
 }
