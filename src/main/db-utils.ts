@@ -64,8 +64,8 @@ export const dbUtils = {
       const itemStmt = db.prepare(`
         INSERT INTO invoice_items (
           invoice_id, description, hsn_code, quantity, per, rate, amount,
-          tax_rate, cgst_amount, sgst_amount, igst_amount
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          discount, tax_rate, cgst_amount, sgst_amount, igst_amount
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `)
 
       for (const item of items) {
@@ -77,6 +77,7 @@ export const dbUtils = {
           item.per,
           item.rate,
           item.amount,
+          item.discount,
           item.tax_rate,
           item.cgst_amount,
           item.sgst_amount,

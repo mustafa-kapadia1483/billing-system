@@ -42,6 +42,7 @@ db.exec(`
     per TEXT DEFAULT 'PCS',
     rate DECIMAL(10,2) NOT NULL,
     amount DECIMAL(10,2) NOT NULL,
+    discount DECIMAL(10,2) DEFAULT 0,
     tax_rate DECIMAL(10,2) DEFAULT 18.0,
     cgst_amount DECIMAL(10,2) DEFAULT 0,
     sgst_amount DECIMAL(10,2) DEFAULT 0,

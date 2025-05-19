@@ -20,7 +20,8 @@
       cgst_amount: 0,
       sgst_amount: 0,
       igst_amount: 0,
-      per: 'PCS'
+      per: 'PCS',
+      discount: 0
     }
   ])
   let invoiceNumber = $state('')
@@ -38,7 +39,9 @@
 
   function updateItemAmount(index: number): void {
     const item = items[index]
-    item.amount = item.quantity * item.rate
+    const discountAmount = item.rate * (item.discount / 100)
+    const rateAfterDiscount = item.rate - discountAmount
+    item.amount = item.quantity * rateAfterDiscount
 
     // Calculate tax amounts based on company state
     if (selectedCompanyData?.state === sellerDetails.state) {
@@ -65,7 +68,8 @@
       cgst_amount: 0,
       sgst_amount: 0,
       igst_amount: 0,
-      per: 'PCS'
+      per: 'PCS',
+      discount: 0
     })
   }
 
@@ -178,54 +182,54 @@
 
       {#each items as item, i (i)}
         <div
-          class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end bg-gray-50 p-4 rounded-lg border border-gray-200"
+          class="grid grid-cols-1 md:grid-cols-12 gap-2 items-end bg-gray-50 p-3 rounded-lg border border-gray-200"
         >
-          <div class="md:col-span-4">
-            <label for="description-${i}" class="block text-sm font-semibold text-gray-800 mb-1.5"
-              >Description</label
-            >
+          <div class="md:col-span-3">
+            <label for="description-${i}" class="block text-xs font-semibold text-gray-800 mb-1">
+              Description
+            </label>
             <input
               id="description-${i}"
               type="text"
               bind:value={item.description}
-              class="input w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
+              class="input w-full px-2 py-1.5 text-sm bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
               required
             />
           </div>
           <div class="md:col-span-1">
-            <label for="hsn-${i}" class="block text-sm font-semibold text-gray-800 mb-1.5">
+            <label for="hsn-${i}" class="block text-xs font-semibold text-gray-800 mb-1">
               HSN/SAC
             </label>
             <input
               id="hsn-${i}"
               type="text"
               bind:value={item.hsn_code}
-              class="input w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
-              placeholder="e.g. 8471"
+              class="input w-full px-2 py-1.5 text-sm bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
+              placeholder="8471"
             />
           </div>
-          <div class="md:col-1">
-            <label for="quantity-${i}" class="block text-sm font-semibold text-gray-800 mb-1.5">
-              Quantity
+          <div class="md:col-span-1">
+            <label for="quantity-${i}" class="block text-xs font-semibold text-gray-800 mb-1">
+              Qty
             </label>
             <input
               id="quantity-${i}"
               type="number"
               bind:value={item.quantity}
               oninput={() => updateItemAmount(i)}
-              class="input w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
+              class="input w-full px-2 py-1.5 text-sm bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
               min="1"
               required
             />
           </div>
-          <div class="md:col-1">
-            <label for="per-${i}" class="block text-sm font-semibold text-gray-800 mb-1.5">
+          <div class="md:col-span-1">
+            <label for="per-${i}" class="block text-xs font-semibold text-gray-800 mb-1">
               Per
             </label>
             <UnitSelect id="per-${i}" bind:value={item.per} required />
           </div>
-          <div class="md:col-span-2">
-            <label for="rate-${i}" class="block text-sm font-semibold text-gray-800 mb-1.5">
+          <div class="md:col-span-1.5">
+            <label for="rate-${i}" class="block text-xs font-semibold text-gray-800 mb-1">
               Rate
             </label>
             <input
@@ -233,21 +237,39 @@
               type="number"
               bind:value={item.rate}
               oninput={() => updateItemAmount(i)}
-              class="input w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
+              class="input w-full px-2 py-1.5 text-sm bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
               min="0"
               step="0.01"
               required
             />
           </div>
           <div class="md:col-span-1">
-            <label for="tax-rate-${i}" class="block text-sm font-semibold text-gray-800 mb-1.5"
-              >Tax Rate</label
-            >
+            <label for="discount-${i}" class="block text-xs font-semibold text-gray-800 mb-1">
+              Disc.
+            </label>
+            <div class="relative">
+              <input
+                id="discount-${i}"
+                type="number"
+                bind:value={item.discount}
+                oninput={() => updateItemAmount(i)}
+                class="input w-full px-2 py-1.5 text-sm bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors pr-6"
+                min="0"
+                max="100"
+                step="0.01"
+              />
+              <span class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 text-xs">%</span>
+            </div>
+          </div>
+          <div class="md:col-span-1">
+            <label for="tax-rate-${i}" class="block text-xs font-semibold text-gray-800 mb-1">
+              Tax
+            </label>
             <select
               id="tax-rate-${i}"
               bind:value={item.tax_rate}
               onchange={() => updateItemAmount(i)}
-              class="input w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors appearance-none"
+              class="input w-full px-2 py-1.5 text-sm bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors appearance-none"
             >
               <option value={3}>3%</option>
               <option value={5}>5%</option>
@@ -256,15 +278,15 @@
               <option value={28}>28%</option>
             </select>
           </div>
-          <div class="md:col-span-2">
-            <label for="amount-${i}" class="block text-sm font-semibold text-gray-800 mb-1.5">
+          <div class="md:col-span-1.5">
+            <label for="amount-${i}" class="block text-xs font-semibold text-gray-800 mb-1">
               Amount
             </label>
             <input
               id="amount-${i}"
               type="number"
               value={item.amount}
-              class="input w-full px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-lg"
+              class="input w-full px-2 py-1.5 text-sm bg-gray-100 border border-gray-200 rounded-lg"
               readonly
             />
           </div>
@@ -272,7 +294,7 @@
             {#if items.length > 1}
               <button
                 type="button"
-                class="btn btn-danger px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 font-medium rounded-lg transition-colors text-sm"
+                class="btn btn-danger px-2 py-1.5 text-xs bg-red-50 hover:bg-red-100 text-red-600 font-medium rounded-lg transition-colors"
                 onclick={() => removeItem(i)}
               >
                 Remove

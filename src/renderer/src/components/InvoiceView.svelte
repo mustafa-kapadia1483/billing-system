@@ -33,6 +33,7 @@
       0
     )
   )
+
   let totalIgstAmount = $derived(
     invoiceData.items?.reduce((acc, item) => acc + item.igst_amount, 0)
   )
@@ -41,6 +42,10 @@
   )
   let totalSgstAmount = $derived(
     invoiceData.items?.reduce((acc, item) => acc + item.sgst_amount, 0)
+  )
+
+  let discountPresent = $derived(
+    invoiceData.items?.reduce((acc, item) => acc + item.discount, 0) > 0
   )
 
   let upiQrCode = $derived(
@@ -135,7 +140,9 @@
             <th class="p-1 text-center">Quantity</th>
             <th class="p-1 text-right">Rate</th>
             <th class="p-1 text-center">per</th>
-            <th class="p-1 text-center">Disc. %</th>
+            {#if discountPresent}
+              <th class="p-1 text-center">Disc. %</th>
+            {/if}
             <th class="p-1 text-right">Amount</th>
           </tr>
         </thead>
@@ -148,7 +155,9 @@
               <td class="p-1 text-center">{item.quantity} {item.per}</td>
               <td class="p-1 text-right">{item.rate.toFixed(2)}</td>
               <td class="p-1 text-center">{item.per}</td>
-              <td class="p-1 text-center">-</td>
+              {#if discountPresent}
+                <td class="p-1 text-center">{item.discount} %</td>
+              {/if}
               <td class="p-1 text-right">{item.amount.toFixed(2)}</td>
             </tr>
           {/each}
@@ -156,7 +165,7 @@
             <tr class="bg-gray-50">
               <td></td>
               <td class="p-1 text-right">CGST</td>
-              {#each Array.from({ length: 5 }) as _, i (i)}
+              {#each Array.from({ length: discountPresent ? 5 : 4 }) as _, i (i)}
                 <td></td>
               {/each}
               <td class="p-1 text-right"
@@ -166,7 +175,7 @@
             <tr class="bg-gray-50">
               <td></td>
               <td class="p-1 border-r text-right">SGST</td>
-              {#each Array.from({ length: 5 }) as _, i (i)}
+              {#each Array.from({ length: discountPresent ? 5 : 4 }) as _, i (i)}
                 <td></td>
               {/each}
 
@@ -178,7 +187,7 @@
             <tr class="bg-gray-50">
               <td></td>
               <td class="p-1 text-right">IGST</td>
-              {#each Array.from({ length: 5 }) as _, i (i)}
+              {#each Array.from({ length: { length: discountPresent ? 5 : 4 } }) as _, i (i)}
                 <td></td>
               {/each}
               <td class="p-1 text-right"
@@ -187,7 +196,7 @@
             </tr>
           {/if}
           <tr>
-            <td colspan="7" class="p-1 text-right font-semibold">Total</td>
+            <td colspan={discountPresent ? 7 : 6} class="p-1 text-right font-semibold">Total</td>
             <td class="p-1 text-right font-semibold">
               {formatter.format(
                 invoiceData.items.reduce((sum, item) => {
@@ -199,7 +208,7 @@
             </td>
           </tr>
           <tr>
-            <td colspan="7" class="p-1 text-left">
+            <td colspan={discountPresent ? 7 : 6} class="p-1 text-left">
               <p class="border-none">
                 <span class="font-semibold border-none">Amount Chargeable (in words):</span>
                 {toWords.convert(
