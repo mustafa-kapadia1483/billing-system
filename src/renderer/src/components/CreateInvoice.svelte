@@ -101,6 +101,48 @@
     toasts.success(`Invoice No. ${invoiceNumber} created successfully`)
     goto('/invoices')
   }
+
+  let searchResults = $state([])
+  let showDropdown = $state(false)
+  let searchTimeout
+
+  $inspect(searchResults)
+  async function searchInventory(query: string, index: number): Promise<void> {
+    clearTimeout(searchTimeout)
+    searchTimeout = setTimeout(async () => {
+      if (query.length < 2) {
+        searchResults = []
+        showDropdown = false
+        return
+      }
+
+      try {
+        const results = await window.api.getInventory({
+          name: query,
+          sortBy: 'name',
+          sortOrder: 'asc',
+          limit: 5
+        })
+        searchResults = results
+        showDropdown = true
+      } catch (error) {
+        toasts.error('Failed to search inventory')
+      }
+    }, 300)
+  }
+
+  function selectInventoryItem(item, index: number): void {
+    items[index] = {
+      ...items[index],
+      description: (item.name + (item.description ? ` - ${item.description}` : '')).trim(),
+      hsn_code: item.hsn_code,
+      rate: item.rate,
+      tax_rate: item.tax_rate
+    }
+    showDropdown = false
+    searchResults = []
+    updateItemAmount(index)
+  }
 </script>
 
 <div class="card bg-white shadow-lg rounded-lg p-8 border border-gray-100">
@@ -184,18 +226,44 @@
         <div
           class="grid grid-cols-1 md:grid-cols-12 gap-2 items-end bg-gray-50 p-3 rounded-lg border border-gray-200"
         >
-          <div class="md:col-span-3">
-            <label for="description-${i}" class="block text-xs font-semibold text-gray-800 mb-1">
-              Description
+          <div class="md:col-span-3 relative">
+            <label for="name-${i}" class="block text-xs font-semibold text-gray-800 mb-1">
+              Name
             </label>
             <input
-              id="description-${i}"
+              id="name-${i}"
               type="text"
               bind:value={item.description}
+              oninput={(e) => searchInventory(e.target.value, i)}
+              onblur={() => setTimeout(() => (showDropdown = false), 200)}
               class="input w-full px-2 py-1.5 text-sm bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
               required
+              placeholder="Type to search inventory..."
             />
+            {#if showDropdown && searchResults.length > 0}
+              <div
+                class="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto"
+              >
+                {#each searchResults as result}
+                  <button
+                    type="button"
+                    class="w-full text-left px-4 py-2 hover:bg-gray-50 focus:bg-gray-50 focus:outline-none transition-colors"
+                    onclick={() => selectInventoryItem(result, i)}
+                  >
+                    <div class="text-sm font-medium text-gray-800">{result.name}</div>
+                    {#if result.description}
+                      <div class="text-xs text-gray-500 mt-0.5">{result.description}</div>
+                    {/if}
+                    <div class="text-xs text-gray-600 mt-1 flex items-center justify-between">
+                      <span>HSN: {result.hsn_code}</span>
+                      <span class="font-medium">{formatter.format(result.rate)}</span>
+                    </div>
+                  </button>
+                {/each}
+              </div>
+            {/if}
           </div>
+
           <div class="md:col-span-1">
             <label for="hsn-${i}" class="block text-xs font-semibold text-gray-800 mb-1">
               HSN/SAC
