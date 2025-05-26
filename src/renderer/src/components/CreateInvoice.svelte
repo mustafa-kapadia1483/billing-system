@@ -28,6 +28,14 @@
   let invoiceNumber = $state('')
   let invoiceDate = $state(new Date().toISOString().split('T')[0])
 
+  let props = $props()
+  let { id: invoiceId = undefined, edit: isEditMode = false } = $derived.by(() => {
+    if (props.route.result.querystring) {
+      return props.route.result.querystring.params
+    }
+    return {}
+  })
+
   let totalAmount = $derived(items.reduce((sum, item) => sum + item.amount, 0))
   let totalCgst = $derived(items.reduce((sum, item) => sum + item.cgst_amount, 0))
   let totalSgst = $derived(items.reduce((sum, item) => sum + item.sgst_amount, 0))
@@ -36,6 +44,31 @@
 
   onMount(async () => {
     companies = await window.api.getCompanies()
+
+    if (isEditMode && invoiceId) {
+      const { invoice, items: invoiceItems } = await window.api.getInvoiceDetails(invoiceId)
+
+      // Populate form with invoice details
+      invoiceNumber = invoice.invoice_number
+      invoiceDate = invoice.date
+      selectedCompany = invoice.company_id
+      selectedCompanyData = companies.find((c) => c.id === invoice.company_id)
+
+      // Populate items
+      items = invoiceItems.map((item) => ({
+        description: item.description,
+        hsn_code: item.hsn_code,
+        quantity: item.quantity,
+        rate: item.rate,
+        amount: item.amount,
+        tax_rate: item.tax_rate,
+        cgst_amount: item.cgst_amount,
+        sgst_amount: item.sgst_amount,
+        igst_amount: item.igst_amount,
+        per: item.per,
+        discount: item.discount
+      }))
+    }
   })
 
   function updateItemAmount(index: number): void {
@@ -98,9 +131,19 @@
       igstAmount: $state.snapshot(totalIgst)
     }
 
-    await window.api.createInvoice(invoice)
-    toasts.success(`Invoice No. ${invoiceNumber} created successfully`)
-    goto('/invoices')
+    try {
+      if (isEditMode) {
+        await window.api.updateInvoiceData(invoiceId, invoice)
+        toasts.success(`Invoice No. ${invoiceNumber} updated successfully`)
+      } else {
+        await window.api.createInvoice(invoice)
+        toasts.success(`Invoice No. ${invoiceNumber} created successfully`)
+      }
+      goto('/invoices')
+    } catch (error) {
+      console.error('Failed to create invoice:', error)
+      toasts.error(`Failed to ${isEditMode ? 'update' : 'create'} invoice`)
+    }
   }
 
   let searchResults = $state([])
@@ -156,7 +199,7 @@
         d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
       />
     </svg>
-    Create New Invoice
+    {isEditMode ? 'Edit Invoice' : 'Create New Invoice'}
   </h2>
   <form onsubmit={handleSubmit} class="space-y-6">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -404,10 +447,10 @@
             stroke-linecap="round"
             stroke-linejoin="round"
             stroke-width="2"
-            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            d="M5 13l4 4L19 7"
           />
         </svg>
-        Create Invoice
+        {isEditMode ? 'Update Invoice' : 'Create Invoice'}
       </Button>
     </div>
   </form>

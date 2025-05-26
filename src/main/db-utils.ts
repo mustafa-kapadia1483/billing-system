@@ -91,6 +91,69 @@ export const dbUtils = {
     return result
   },
 
+  updateInvoiceData: (invoiceId: number, invoice: any) => {
+    const { companyId, items, ...invoiceData } = invoice
+
+    const result = db.transaction(() => {
+      // Update invoice header
+      const invoiceStmt = db.prepare(`
+        UPDATE invoices SET
+          invoice_number = ?,
+          date = ?,
+          company_id = ?,
+          total_amount = ?,
+          cgst_amount = ?,
+          sgst_amount = ?,
+          igst_amount = ?
+        WHERE id = ?
+      `)
+
+      invoiceStmt.run(
+        invoiceData.invoiceNumber,
+        invoiceData.date,
+        companyId,
+        invoiceData.totalAmount,
+        invoiceData.cgstAmount,
+        invoiceData.sgstAmount,
+        invoiceData.igstAmount,
+        invoiceId
+      )
+
+      // Delete existing items
+      const deleteItemsStmt = db.prepare('DELETE FROM invoice_items WHERE invoice_id = ?')
+      deleteItemsStmt.run(invoiceId)
+
+      // Insert updated items
+      const itemStmt = db.prepare(`
+        INSERT INTO invoice_items (
+          invoice_id, description, hsn_code, quantity, per, rate, amount,
+          discount, tax_rate, cgst_amount, sgst_amount, igst_amount
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `)
+
+      for (const item of items) {
+        itemStmt.run(
+          invoiceId,
+          item.description,
+          item.hsn_code,
+          item.quantity,
+          item.per,
+          item.rate,
+          item.amount,
+          item.discount,
+          item.tax_rate,
+          item.cgst_amount,
+          item.sgst_amount,
+          item.igst_amount
+        )
+      }
+
+      return invoiceId
+    })()
+
+    return result
+  },
+
   getInvoices: (
     options: {
       companyId?: number

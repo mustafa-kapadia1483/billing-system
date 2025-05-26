@@ -63,6 +63,10 @@ app.whenReady().then(() => {
     return dbUtils.createInvoice(invoice)
   })
 
+  ipcMain.handle('update-invoice-data', async (_, invoiceId, invoice) => {
+    return dbUtils.updateInvoiceData(invoiceId, invoice)
+  })
+
   ipcMain.handle('get-invoices', (_, options) => {
     return dbUtils.getInvoices(options)
   })

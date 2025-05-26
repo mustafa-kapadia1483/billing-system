@@ -36,6 +36,10 @@
     goto(`/invoice/${id}`)
   }
 
+  function editInvoice(id: number): void {
+    goto(`/create-invoice`, { id, edit: true })
+  }
+
   async function deleteInvoice(id: number, invoice_number: string): Promise<void> {
     await window.api.deleteInvoice(id)
     toasts.info(`Invoice No. ${invoice_number} deleted successfully`)
@@ -232,18 +236,95 @@
             <td class="px-6 py-4 whitespace-nowrap">{formatter.format(invoice.total_amount)}</td>
             <td class="px-6 py-4 whitespace-nowrap w-32">{invoice.is_paid ? 'Paid' : 'Unpaid'}</td>
             <td class="px-6 py-4 whitespace-nowrap space-x-2">
-              <Button size="sm" variant="secondary" onclick={() => togglePaid(invoice)}>
-                Mark as {invoice.is_paid ? 'Unpaid' : 'Paid'}
+              <Button
+                size="sm"
+                variant="secondary"
+                onclick={() => togglePaid(invoice)}
+                title={`Mark as ${invoice.is_paid ? 'Unpaid' : 'Paid'}`}
+              >
+                {#if invoice.is_paid}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                {:else}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                {/if}
               </Button>
-              <Button size="sm" variant="secondary" onclick={() => viewInvoice(invoice.id)}>
-                View
+              <Button
+                size="sm"
+                variant="secondary"
+                onclick={() => viewInvoice(invoice.id)}
+                title="View"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                  <path
+                    fill-rule="evenodd"
+                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </Button>
+              <Button
+                size="sm"
+                variant="secondary"
+                onclick={() => editInvoice(invoice.id)}
+                title="Edit"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
+                  />
+                </svg>
               </Button>
               <Button
                 size="sm"
                 variant="danger"
                 onclick={() => deleteInvoice(invoice.id, invoice.invoice_number)}
+                title="Delete"
               >
-                Delete
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
               </Button>
             </td>
           </tr>

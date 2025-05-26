@@ -9,6 +9,8 @@ const api = {
   createInvoice: (invoice) => ipcRenderer.invoke('create-invoice', invoice),
   getInvoices: (options) => ipcRenderer.invoke('get-invoices', options),
   getInvoiceDetails: (id: number) => ipcRenderer.invoke('get-invoice-details', id),
+  updateInvoiceData: (invoiceId: number, invoice: any) =>
+    ipcRenderer.invoke('update-invoice-data', invoiceId, invoice),
   updateInvoicePaidStatus: (id: number, isPaid: boolean) =>
     ipcRenderer.invoke('update-invoice-paid-status', id, isPaid),
   deleteInvoice: (id: number) => ipcRenderer.invoke('delete-invoice', id),
