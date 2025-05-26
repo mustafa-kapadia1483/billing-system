@@ -1,6 +1,7 @@
 <script lang="ts">
   import StateSelect from './state-select.svelte'
   import { toasts } from '$lib/Toast'
+  import Button from '$lib/Button.svelte'
 
   interface Props {
     isOpen: boolean
@@ -62,7 +63,7 @@
     }
   }
 
-  function closeModal() {
+  function closeModal(): void {
     formData = {
       id: null,
       name: '',
@@ -75,7 +76,7 @@
     onClose()
   }
 
-  async function handleFetchGst() {
+  async function handleFetchGst(): Promise<void> {
     try {
       const captchaResponse = await window.api.getGstCaptcha()
       if (captchaResponse.code === 200) {
@@ -88,7 +89,7 @@
     }
   }
 
-  async function handleCaptchaSubmit() {
+  async function handleCaptchaSubmit(): Promise<void> {
     try {
       const response = await window.api.fetchGstDetails(formData.gstin, captchaInput, captchaCookie)
       if (response.code === 200 && response.data) {
@@ -112,7 +113,7 @@
     }
   }
 
-  function closeCaptchaModal() {
+  function closeCaptchaModal(): void {
     showCaptchaModal = false
     captchaInput = ''
   }
@@ -224,19 +225,10 @@
         </div>
 
         <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
-          <button
-            type="button"
-            onclick={closeModal}
-            class="btn btn-secondary px-4 py-2 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-lg transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            class="btn btn-primary px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-          >
+          <Button variant="secondary" onclick={closeModal}>Cancel</Button>
+          <Button type="submit">
             {isEditMode ? 'Save Changes' : 'Create Company'}
-          </button>
+          </Button>
         </div>
       </form>
     </div>
@@ -272,20 +264,8 @@
           class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
         />
         <div class="flex justify-end gap-3">
-          <button
-            type="button"
-            onclick={closeCaptchaModal}
-            class="px-4 py-2 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-lg transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onclick={handleCaptchaSubmit}
-            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-          >
-            Submit
-          </button>
+          <Button variant="secondary" onclick={closeCaptchaModal}>Cancel</Button>
+          <Button onclick={handleCaptchaSubmit}>Submit</Button>
         </div>
       </div>
     </div>

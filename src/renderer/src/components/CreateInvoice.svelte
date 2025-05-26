@@ -5,6 +5,7 @@
   import { goto } from '@mateothegreat/svelte5-router'
   import { toasts } from '$lib/Toast'
   import UnitSelect from '$lib/unit-select.svelte'
+  import Button from '$lib/Button.svelte'
 
   let companies = $state([])
   let selectedCompany = $state(null)
@@ -205,11 +206,8 @@
     <div class="space-y-4">
       <div class="flex justify-between items-center">
         <h3 class="text-lg font-semibold text-gray-800">Items</h3>
-        <button
-          type="button"
-          class="btn btn-secondary px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg shadow-sm hover:shadow transition-all flex items-center gap-2"
-          onclick={addItem}
-        >
+
+        <Button class="flex items-center gap-2" type="button" variant="secondary" onclick={addItem}>
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               stroke-linecap="round"
@@ -219,7 +217,7 @@
             />
           </svg>
           Add Item
-        </button>
+        </Button>
       </div>
 
       {#each items as item, i (i)}
@@ -358,15 +356,11 @@
               readonly
             />
           </div>
-          <div class="md:col-span-1 flex justify-end">
+          <div class="md:col-span-1 flex justify-end items-center">
             {#if items.length > 1}
-              <button
-                type="button"
-                class="btn btn-danger px-2 py-1.5 text-xs bg-red-50 hover:bg-red-100 text-red-600 font-medium rounded-lg transition-colors"
-                onclick={() => removeItem(i)}
-              >
+              <Button type="button" variant="danger" size="sm" onclick={() => removeItem(i)}>
                 Remove
-              </button>
+              </Button>
             {/if}
           </div>
         </div>
@@ -404,10 +398,7 @@
     </div>
 
     <div class="flex justify-end pt-4">
-      <button
-        type="submit"
-        class="btn btn-primary px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm hover:shadow transition-all flex items-center gap-2"
-      >
+      <Button type="submit" class="flex items-center gap-2">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             stroke-linecap="round"
@@ -417,7 +408,7 @@
           />
         </svg>
         Create Invoice
-      </button>
+      </Button>
     </div>
   </form>
 </div>

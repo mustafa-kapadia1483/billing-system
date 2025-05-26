@@ -2,6 +2,7 @@
   import { onMount } from 'svelte'
   import { toasts } from '$lib/Toast'
   import CompanyDialog from '$lib/company-dialog.svelte'
+  import Button from '$lib/Button.svelte'
 
   let companies = $state([])
   let isModalOpen = $state(false)
@@ -34,10 +35,7 @@
 <div class="card p-6">
   <div class="flex justify-between items-center mb-6">
     <h2 class="text-2xl font-semibold text-gray-800">Companies List</h2>
-    <button
-      class="btn btn-primary flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-      onclick={() => openModal()}
-    >
+    <Button variant="primary" onclick={() => openModal()} class="flex items-center gap-2">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
           stroke-linecap="round"
@@ -47,7 +45,7 @@
         />
       </svg>
       Add Company
-    </button>
+    </Button>
   </div>
 
   <div class="overflow-hidden rounded-lg border border-gray-200">
@@ -83,18 +81,10 @@
               <br />{company.city}, {company.state}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm space-x-2">
-              <button
-                class="btn btn-secondary text-sm bg-gray-50 hover:bg-gray-100 text-gray-600 rounded transition-colors"
-                onclick={() => openModal(company)}
-              >
-                Edit
-              </button>
-              <button
-                class="btn btn-danger text-sm bg-red-50 hover:bg-red-100 text-red-600 rounded transition-colors"
-                onclick={() => deleteCompany(company.id, company.name)}
-              >
+              <Button variant="secondary" onclick={() => openModal(company)}>Edit</Button>
+              <Button variant="danger" onclick={() => deleteCompany(company.id, company.name)}>
                 Delete
-              </button>
+              </Button>
             </td>
           </tr>
         {/each}

@@ -3,6 +3,7 @@
   import { goto } from '@mateothegreat/svelte5-router'
   import { formatter } from '$lib/utils/formatting'
   import { toasts } from '$lib/Toast'
+  import Button from '$lib/Button.svelte'
 
   let invoices = $state([])
   let companies = $state([])
@@ -70,7 +71,7 @@
 <div class="bg-white shadow-lg rounded-xl p-6">
   <div class="flex justify-between items-center mb-6">
     <h2 class="text-2xl font-semibold">Invoices</h2>
-    <a href="/create-invoice" class="btn btn-primary">Create New Invoice</a>
+    <Button href="/create-invoice" asAnchorTag={true}>Create New Invoice</Button>
   </div>
 
   <div class="mb-6 bg-gray-50 p-4 rounded-lg space-y-4">
@@ -188,9 +189,7 @@
     </div>
 
     <div class="flex justify-end">
-      <button class="btn btn-secondary px-4 py-2 text-sm" onclick={resetFilters}>
-        Reset Filters
-      </button>
+      <Button size="sm" variant="secondary" onclick={resetFilters}>Reset Filters</Button>
     </div>
   </div>
 
@@ -233,18 +232,19 @@
             <td class="px-6 py-4 whitespace-nowrap">{formatter.format(invoice.total_amount)}</td>
             <td class="px-6 py-4 whitespace-nowrap w-32">{invoice.is_paid ? 'Paid' : 'Unpaid'}</td>
             <td class="px-6 py-4 whitespace-nowrap space-x-2">
-              <button class="btn btn-secondary text-sm" onclick={() => togglePaid(invoice)}>
+              <Button size="sm" variant="secondary" onclick={() => togglePaid(invoice)}>
                 Mark as {invoice.is_paid ? 'Unpaid' : 'Paid'}
-              </button>
-              <button class="btn btn-secondary text-sm" onclick={() => viewInvoice(invoice.id)}>
+              </Button>
+              <Button size="sm" variant="secondary" onclick={() => viewInvoice(invoice.id)}>
                 View
-              </button>
-              <button
-                class="btn btn-danger text-sm bg-red-50 hover:bg-red-100 text-red-600 rounded transition-colors"
+              </Button>
+              <Button
+                size="sm"
+                variant="danger"
                 onclick={() => deleteInvoice(invoice.id, invoice.invoice_number)}
               >
                 Delete
-              </button>
+              </Button>
             </td>
           </tr>
         {/each}

@@ -2,6 +2,7 @@
   import { onMount } from 'svelte'
   import { toasts } from '$lib/Toast'
   import { formatter } from '$lib/utils/formatting'
+  import Button from '$lib/Button.svelte'
 
   let inventory = $state([])
   let isModalOpen = $state(false)
@@ -64,10 +65,8 @@
 <div class="card bg-white shadow-lg rounded-lg p-8 border border-gray-100">
   <div class="flex justify-between items-center mb-6">
     <h2 class="text-2xl font-semibold text-gray-800">Inventory Management</h2>
-    <button
-      class="btn btn-primary flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-      onclick={() => openModal()}
-    >
+
+    <Button class="flex items-center gap-2" onclick={() => openModal()}>
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
           stroke-linecap="round"
@@ -77,7 +76,7 @@
         />
       </svg>
       Add Item
-    </button>
+    </Button>
   </div>
 
   <div class="mb-6 bg-gray-50 p-4 rounded-lg space-y-4">
@@ -178,9 +177,7 @@
       </div>
 
       <div class="md:col-span-2 flex justify-end items-end">
-        <button class="btn btn-secondary px-4 py-2 text-sm" onclick={resetFilters}>
-          Reset Filters
-        </button>
+        <Button variant="secondary" size="sm" onclick={resetFilters}>Reset Filters</Button>
       </div>
     </div>
   </div>
@@ -218,15 +215,10 @@
             <td class="px-6 py-4 whitespace-nowrap">{formatter.format(item.rate)}</td>
             <td class="px-6 py-4 whitespace-nowrap">{item.tax_rate}%</td>
             <td class="px-6 py-4 whitespace-nowrap space-x-2">
-              <button class="btn btn-secondary text-sm" onclick={() => openModal(item)}>
-                Edit
-              </button>
-              <button
-                class="btn btn-danger text-sm bg-red-50 hover:bg-red-100 text-red-600 rounded transition-colors"
-                onclick={() => deleteItem(item.id, item.name)}
-              >
+              <Button variant="secondary" size="sm" onclick={() => openModal(item)}>Edit</Button>
+              <Button variant="danger" size="sm" onclick={() => deleteItem(item.id, item.name)}>
                 Delete
-              </button>
+              </Button>
             </td>
           </tr>
         {/each}
@@ -348,19 +340,13 @@
         </div>
 
         <div class="flex justify-end space-x-3 pt-4">
-          <button
-            type="button"
-            class="btn btn-secondary px-4 py-2"
-            onclick={() => (isModalOpen = false)}
-          >
+          <Button type="button" variant="secondary" onclick={() => (isModalOpen = false)}>
             Cancel
-          </button>
-          <button
-            type="submit"
-            class="btn btn-primary px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
+          </Button>
+
+          <Button type="submit">
             {selectedItem ? 'Update' : 'Create'}
-          </button>
+          </Button>
         </div>
       </form>
     </div>

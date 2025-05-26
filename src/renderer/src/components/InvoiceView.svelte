@@ -1,10 +1,10 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { formatter, toWords } from '$lib/utils/formatting'
-  import { ToWords } from 'to-words'
   import sellerDetails from '../config/seller.json'
   import upiqr from 'upiqr'
   import { toasts } from '$lib/Toast'
+  import Button from '$lib/Button.svelte'
 
   let { route } = $props()
   let invoiceData = $state(null)
@@ -19,7 +19,7 @@
     window.print()
   }
 
-  async function downloadPDF(): void {
+  async function downloadPDF(): Promise<void> {
     const date = new Date(invoiceData.invoice.date).toISOString().split('T')[0]
     const downloadPath = await window.api.downloadPdf(
       `${invoiceData.invoice.name}-${invoiceData.invoice.invoice_number}-${date}.pdf`
@@ -58,10 +58,7 @@
 </script>
 
 <div class="flex justify-center gap-4 mb-4 print:hidden">
-  <button
-    class="flex items-center gap-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 action-button"
-    onclick={downloadPDF}
-  >
+  <Button size="sm" class="flex items-center gap-1" onclick={downloadPDF}>
     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
       <path
         fill-rule="evenodd"
@@ -70,11 +67,8 @@
       />
     </svg>
     Download PDF
-  </button>
-  <button
-    class="flex items-center gap-1 px-4 py-2 text-sm font-medium bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 action-button"
-    onclick={printInvoice}
-  >
+  </Button>
+  <Button class="flex items-center gap-1" variant="secondary" onclick={printInvoice}>
     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
       <path
         fill-rule="evenodd"
@@ -83,7 +77,7 @@
       />
     </svg>
     Print
-  </button>
+  </Button>
 </div>
 {#if invoiceData}
   <div
