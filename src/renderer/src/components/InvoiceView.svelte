@@ -5,9 +5,11 @@
   import upiqr from 'upiqr'
   import { toasts } from '$lib/Toast'
   import Button from '$lib/Button.svelte'
+  import ToggleButton from '$lib/toggle-button.svelte'
 
   let { route } = $props()
   let invoiceData = $state(null)
+  let performaInvoice = $state(false)
 
   onMount(async () => {
     if (route.result.path.params.id) {
@@ -22,7 +24,7 @@
   async function downloadPDF(): Promise<void> {
     const date = new Date(invoiceData.invoice.date).toISOString().split('T')[0]
     const downloadPath = await window.api.downloadPdf(
-      `${invoiceData.invoice.name}-${invoiceData.invoice.invoice_number}-${date}.pdf`
+      `${invoiceTitle.toLowerCase().split(' ').join('_')}-${invoiceData.invoice.name}-${invoiceData.invoice.invoice_number}-${date}.pdf`
     )
     toasts.success(`Invoice downloaded: ${downloadPath}`, 0)
   }
@@ -55,36 +57,57 @@
       transactionNote: invoiceData && `Payment for Invoice No ${invoiceData.invoice.invoice_number}`
     })
   )
+
+  let invoiceTitle = $derived(performaInvoice ? 'Performa Invoice' : 'Tax Invoice')
 </script>
 
-<div class="flex justify-center gap-4 mb-4 print:hidden">
-  <Button size="sm" class="flex items-center gap-1" onclick={downloadPDF}>
-    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-      <path
-        fill-rule="evenodd"
-        d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
-        clip-rule="evenodd"
-      />
-    </svg>
-    Download PDF
-  </Button>
-  <Button class="flex items-center gap-1" variant="secondary" onclick={printInvoice}>
-    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-      <path
-        fill-rule="evenodd"
-        d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z"
-        clip-rule="evenodd"
-      />
-    </svg>
-    Print
-  </Button>
+<div class="flex justify-between gap-4 mb-4 print:hidden max-w-[210mm] mx-auto">
+  <ToggleButton
+    bind:checked={performaInvoice}
+    disabled={!invoiceData}
+    label="Performa Invoice"
+    labelPosition="right"
+  />
+
+  <div class="flex items-center gap-4">
+    <Button size="sm" class="flex items-center gap-1" onclick={downloadPDF}>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="w-4 h-4"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+          clip-rule="evenodd"
+        />
+      </svg>
+      Download PDF
+    </Button>
+    <Button class="flex items-center gap-1" variant="secondary" onclick={printInvoice}>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="w-4 h-4"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z"
+          clip-rule="evenodd"
+        />
+      </svg>
+      Print
+    </Button>
+  </div>
 </div>
 {#if invoiceData}
   <div
     id="invoice-content"
     class="bg-white p-8 print:p-0 print:shadow-none max-w-[210mm] mx-auto text-sm"
   >
-    <h1 class="text-xl font-bold mb-4">Tax Invoice</h1>
+    <h1 class="text-xl font-bold mb-4">{invoiceTitle}</h1>
 
     <div class="grid grid-cols-[max-content_max-content] gap-1 text-xs mb-4">
       <p>Invoice No #</p>
