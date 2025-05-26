@@ -7,7 +7,7 @@
     isOpen: boolean
     company: null | object
     onClose: () => void
-    onSuccess: () => void
+    onSuccess: (companyId: null | number) => void
   }
 
   let { isOpen, company, onClose, onSuccess }: Props = $props()
@@ -47,16 +47,17 @@
 
   async function handleSubmit(e: Event): Promise<void> {
     e.preventDefault()
+    let companyId = null
     try {
       const jsonData = JSON.stringify(formData)
       if (isEditMode) {
         await window.api.editCompany(formData.id, JSON.parse(jsonData))
         toasts.success(`Company ${formData.name} updated successfully`)
       } else {
-        await window.api.createCompany(JSON.parse(jsonData))
+        companyId = await window.api.createCompany(JSON.parse(jsonData))
         toasts.success(`Company ${formData.name} created successfully`)
       }
-      onSuccess()
+      onSuccess(companyId)
       closeModal()
     } catch (error) {
       toasts.error(error.message)

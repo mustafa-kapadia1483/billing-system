@@ -6,7 +6,9 @@
   import { toasts } from '$lib/Toast'
   import UnitSelect from '$lib/unit-select.svelte'
   import Button from '$lib/Button.svelte'
+  import CompanyDialog from '$lib/company-dialog.svelte'
 
+  let showCompanyDialog = $state(false)
   let companies = $state([])
   let selectedCompany = $state(null)
   let selectedCompanyData = $state(null)
@@ -150,7 +152,6 @@
   let showDropdown = $state(false)
   let searchTimeout
 
-  $inspect(searchResults)
   async function searchInventory(query: string, index: number): Promise<void> {
     clearTimeout(searchTimeout)
     searchTimeout = setTimeout(async () => {
@@ -186,6 +187,14 @@
     showDropdown = false
     searchResults = []
     updateItemAmount(index)
+  }
+
+  async function handleCompanyDialogSuccess(companyId: number): Promise<void> {
+    const updatedCompanies = await window.api.getCompanies()
+    companies = updatedCompanies
+    // Select the last added company
+    selectedCompanyData = companies.find(({ id }) => id == companyId)
+    selectedCompany = selectedCompanyData.id
   }
 </script>
 
@@ -231,18 +240,36 @@
         <label for="company" class="block text-sm font-semibold text-gray-800 mb-1.5">
           Company
         </label>
-        <select
-          id="company"
-          bind:value={selectedCompany}
-          onchange={handleCompanyChange}
-          class="input w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors appearance-none"
-          required
-        >
-          <option value={null} class="text-gray-500">Select a company</option>
-          {#each companies as company (company.id)}
-            <option value={company.id}>{company.name}</option>
-          {/each}
-        </select>
+        <div class="flex gap-2">
+          <div class="relative flex-1">
+            <select
+              id="company"
+              bind:value={selectedCompany}
+              onchange={handleCompanyChange}
+              class="input w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors appearance-none"
+              required
+            >
+              <option value={null} class="text-gray-500">Select a company</option>
+              {#each companies as company (company.id)}
+                <option value={company.id}>{company.name}</option>
+              {/each}
+            </select>
+            <button
+              type="button"
+              class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              onclick={() => (showCompanyDialog = true)}
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -455,3 +482,10 @@
     </div>
   </form>
 </div>
+
+<CompanyDialog
+  isOpen={showCompanyDialog}
+  company={null}
+  onClose={() => (showCompanyDialog = false)}
+  onSuccess={handleCompanyDialogSuccess}
+/>
