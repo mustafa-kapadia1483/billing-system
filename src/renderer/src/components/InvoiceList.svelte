@@ -197,7 +197,7 @@
     </div>
   </div>
 
-  <div class="table-container">
+  <div class="table-container overflow-auto">
     <table class="table">
       <thead class="bg-gray-50">
         <tr>
@@ -231,7 +231,11 @@
             <td class="px-6 py-4 whitespace-nowrap"
               >{new Date(invoice.date).toLocaleDateString()}</td
             >
-            <td class="px-6 py-4 whitespace-nowrap">{invoice.company_name}</td>
+            <td class="px-6 py-4 whitespace-nowrap" title={invoice.company_name}>
+              {invoice.company_name.length > 25
+                ? invoice.company_name.slice(0, 25) + '...'
+                : invoice.company_name}
+            </td>
             <td class="px-6 py-4 whitespace-nowrap">{invoice.gstin}</td>
             <td class="px-6 py-4 whitespace-nowrap">{formatter.format(invoice.total_amount)}</td>
             <td class="px-6 py-4 whitespace-nowrap w-32">{invoice.is_paid ? 'Paid' : 'Unpaid'}</td>
