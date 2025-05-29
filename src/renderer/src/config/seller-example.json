@@ -1,8 +1,9 @@
 {
   "name": "",
-  "address_line1": "",
-  "address_line2": "",
+  "address": "",
+  "address2": "",
   "gstin": "",
+  "postal_code": "",
   "city": "",
   "state": "",
   "bankDetails": {

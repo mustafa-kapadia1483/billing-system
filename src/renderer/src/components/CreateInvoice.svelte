@@ -7,6 +7,7 @@
   import UnitSelect from '$lib/unit-select.svelte'
   import Button from '$lib/Button.svelte'
   import CompanyDialog from '$lib/company-dialog.svelte'
+  import ToggleButton from '$lib/toggle-button.svelte'
 
   let showCompanyDialog = $state(false)
   let companies = $state([])
@@ -29,6 +30,12 @@
   ])
   let invoiceNumber = $state('')
   let invoiceDate = $state(new Date().toISOString().split('T')[0])
+  let sameAsBillTo = $state(true)
+  let shipToName = $state('')
+  let shipToAddress = $state('')
+  let shipToCity = $state('')
+  let shipToPostalCode = $state('')
+  let shipToState = $state('')
 
   let props = $props()
   let { id: invoiceId = undefined, edit: isEditMode = false } = $derived.by(() => {
@@ -55,6 +62,12 @@
       invoiceDate = invoice.date
       selectedCompany = invoice.company_id
       selectedCompanyData = companies.find((c) => c.id === invoice.company_id)
+
+      shipToName = invoice.ship_to_name || ''
+      shipToAddress = invoice.ship_to_address || ''
+      shipToCity = invoice.ship_to_city || ''
+      shipToPostalCode = invoice.ship_to_postal_code || ''
+      shipToState = invoice.ship_to_state || ''
 
       // Populate items
       items = invoiceItems.map((item) => ({
@@ -130,7 +143,12 @@
       totalAmount: $state.snapshot(totalAmount),
       cgstAmount: $state.snapshot(totalCgst),
       sgstAmount: $state.snapshot(totalSgst),
-      igstAmount: $state.snapshot(totalIgst)
+      igstAmount: $state.snapshot(totalIgst),
+      shipToName: $state.snapshot(shipToName),
+      shipToAddress: $state.snapshot(shipToAddress),
+      shipToCity: $state.snapshot(shipToCity),
+      shipToPostalCode: $state.snapshot(shipToPostalCode),
+      shipToState: $state.snapshot(shipToState)
     }
 
     try {
@@ -196,6 +214,16 @@
     selectedCompanyData = companies.find(({ id }) => id == companyId)
     selectedCompany = selectedCompanyData.id
   }
+
+  $effect(() => {
+    if (sameAsBillTo) {
+      shipToName = selectedCompanyData?.name || ''
+      shipToAddress = selectedCompanyData?.address || ''
+      shipToCity = selectedCompanyData?.city || ''
+      shipToPostalCode = selectedCompanyData?.postal_code || ''
+      shipToState = selectedCompanyData?.state || ''
+    }
+  })
 </script>
 
 <div class="card bg-white shadow-lg rounded-lg p-8 border border-gray-100">
@@ -269,6 +297,86 @@
               </svg>
             </button>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add this after the company selection grid -->
+    <div class="mt-6 space-y-6">
+      {#if !isEditMode}
+        <ToggleButton
+          bind:checked={sameAsBillTo}
+          label="Set Ship To Same as Bill To"
+          labelPosition="right"
+          size="md"
+        />
+      {/if}
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5" class:hidden={sameAsBillTo && !isEditMode}>
+        <div class="group">
+          <label for="ship-to-name" class="block text-sm font-semibold text-gray-800 mb-1.5">
+            Name
+          </label>
+          <input
+            id="ship-to-name"
+            type="text"
+            bind:value={shipToName}
+            class="input w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
+            disabled={sameAsBillTo && !isEditMode}
+            required
+          />
+        </div>
+        <div class="group col-span-2">
+          <label for="ship-to-address" class="block text-sm font-semibold text-gray-800 mb-1.5">
+            Address
+          </label>
+          <input
+            id="ship-to-address"
+            type="text"
+            bind:value={shipToAddress}
+            class="input w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
+            disabled={sameAsBillTo && !isEditMode}
+            required
+          />
+        </div>
+        <div class="group">
+          <label for="ship-to-postal-code" class="block text-sm font-semibold text-gray-800 mb-1.5">
+            Postal Code
+          </label>
+          <input
+            id="ship-to-postal-code"
+            type="text"
+            bind:value={shipToPostalCode}
+            class="input w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
+            disabled={sameAsBillTo && !isEditMode}
+            required
+          />
+        </div>
+        <div class="group">
+          <label for="ship-to-city" class="block text-sm font-semibold text-gray-800 mb-1.5">
+            City
+          </label>
+          <input
+            id="ship-to-city"
+            type="text"
+            bind:value={shipToCity}
+            class="input w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
+            disabled={sameAsBillTo && !isEditMode}
+            required
+          />
+        </div>
+        <div class="group">
+          <label for="ship-to-state" class="block text-sm font-semibold text-gray-800 mb-1.5">
+            State
+          </label>
+          <input
+            id="ship-to-state"
+            type="text"
+            bind:value={shipToState}
+            class="input w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
+            disabled={sameAsBillTo && !isEditMode}
+            required
+          />
         </div>
       </div>
     </div>

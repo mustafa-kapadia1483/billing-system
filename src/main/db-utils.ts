@@ -3,13 +3,13 @@ import { db } from './database'
 export const dbUtils = {
   createCompany: (company: any) => {
     const stmt = db.prepare(
-      'INSERT INTO companies (name, gstin, address_line1, address_line2, city, state) VALUES (?, ?, ?, ?, ?, ?)'
+      'INSERT INTO companies (name, gstin, address, postal_code, city, state) VALUES (?, ?, ?, ?, ?, ?)'
     )
     const result = stmt.run(
       company.name,
       company.gstin,
-      company.address_line1,
-      company.address_line2,
+      company.address,
+      company.postal_code,
       company.city,
       company.state
     )
@@ -47,8 +47,9 @@ export const dbUtils = {
       const invoiceStmt = db.prepare(`
         INSERT INTO invoices (
           invoice_number, date, company_id, total_amount,
-          cgst_amount, sgst_amount, igst_amount
-        ) VALUES (?, ?, ?, ?, ?, ?, ?)
+          cgst_amount, sgst_amount, igst_amount,
+          ship_to_name, ship_to_address, ship_to_city, ship_to_postal_code, ship_to_state
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `)
 
       const invoiceResult = invoiceStmt.run(
@@ -58,7 +59,12 @@ export const dbUtils = {
         invoiceData.totalAmount,
         invoiceData.cgstAmount,
         invoiceData.sgstAmount,
-        invoiceData.igstAmount
+        invoiceData.igstAmount,
+        invoiceData.shipToName || null,
+        invoiceData.shipToAddress || null,
+        invoiceData.shipToCity || null,
+        invoiceData.shipToPostalCode || null,
+        invoiceData.shipToState || null
       )
 
       const itemStmt = db.prepare(`
@@ -104,7 +110,12 @@ export const dbUtils = {
           total_amount = ?,
           cgst_amount = ?,
           sgst_amount = ?,
-          igst_amount = ?
+          igst_amount = ?,
+          ship_to_name = ?,
+          ship_to_address = ?,
+          ship_to_city = ?,
+          ship_to_postal_code = ?,
+          ship_to_state = ?
         WHERE id = ?
       `)
 
@@ -116,6 +127,11 @@ export const dbUtils = {
         invoiceData.cgstAmount,
         invoiceData.sgstAmount,
         invoiceData.igstAmount,
+        invoiceData.shipToName || null,
+        invoiceData.shipToAddress || null,
+        invoiceData.shipToCity || null,
+        invoiceData.shipToPostalCode || null,
+        invoiceData.shipToState || null,
         invoiceId
       )
 
@@ -280,14 +296,14 @@ export const dbUtils = {
   editCompany: (companyId: number, company: any) => {
     const stmt = db.prepare(`
       UPDATE companies 
-      SET name = ?, gstin = ?, address_line1 = ?, address_line2 = ?, city = ?, state = ?
+      SET name = ?, gstin = ?, address = ?, postal_code = ?, city = ?, state = ?
       WHERE id = ?
     `)
     const result = stmt.run(
       company.name,
       company.gstin,
-      company.address_line1,
-      company.address_line2,
+      company.address,
+      company.postal_code,
       company.city,
       company.state,
       companyId

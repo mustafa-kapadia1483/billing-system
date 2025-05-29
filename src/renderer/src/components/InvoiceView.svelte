@@ -6,6 +6,7 @@
   import { toasts } from '$lib/Toast'
   import Button from '$lib/Button.svelte'
   import ToggleButton from '$lib/toggle-button.svelte'
+  import CompanyLogo from '$lib/company-logo.svelte'
 
   let { route } = $props()
   let invoiceData = $state(null)
@@ -107,40 +108,63 @@
     id="invoice-content"
     class="bg-white p-8 print:p-0 print:shadow-none max-w-[210mm] mx-auto text-sm"
   >
-    <h1 class="text-xl font-bold mb-4">{invoiceTitle}</h1>
-
-    <div class="grid grid-cols-[max-content_max-content] gap-1 text-xs mb-4">
-      <p>Invoice No #</p>
-      <p class="font-semibold">{invoiceData.invoice.invoice_number}</p>
-      <p>Invoice Date</p>
-      <p class="font-semibold">{new Date(invoiceData.invoice.date).toLocaleDateString('en-IN')}</p>
+    <div class="flex justify-between items-start bg-white p-2 mb-4">
+      <div class="w-1/6 p-3">
+        <CompanyLogo />
+      </div>
+      <div class="flex-1 text-left ml-4">
+        <p class="text-sm text-gray-600 leading-relaxed space-y-1">
+          <span class="font-medium text-gray-800 block text-base">{sellerDetails.name}</span>
+          <span class="font-medium text-gray-800 block text-base">{sellerDetails.address}</span>
+          <span class="font-medium text-gray-800 block text-base">
+            {sellerDetails.address2}
+          </span>
+          <span class="text-gray-700 inline-flex items-center justify-end gap-2 mt-2">
+            <span class="text-gray-500">GSTIN/UIN:</span>
+            <span class="font-medium text-gray-800">{sellerDetails.gstin}</span>
+          </span>
+          <span class="inline-block ml-6 pl-6 border-l border-gray-200">
+            <span class="text-gray-500">State:</span>
+            <span class="font-medium text-gray-800 ml-1">{sellerDetails.state}</span>
+          </span>
+        </p>
+      </div>
+    </div>
+    <div class="flex justify-between items-center mb-4 p-2 border border-gray-300">
+      <h1 class="text-2xl font-bold text-gray-800">{invoiceTitle}</h1>
+      <div class="flex gap-6 text-gray-600">
+        <div class="flex items-center gap-2">
+          <p class="text-sm">Invoice No</p>
+          <p class="font-semibold text-gray-800">#{invoiceData.invoice.invoice_number}</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <p class="text-sm">Invoice Date</p>
+          <p class="font-semibold text-gray-800">
+            {new Date(invoiceData.invoice.date).toLocaleDateString('en-IN')}
+          </p>
+        </div>
+      </div>
     </div>
 
     <div class="grid grid-cols-2 gap-4 w-full mb-4">
-      <div class="border border-gray-300 p-3">
-        <p class="font-semibold mb-2">Billed by</p>
-        <p class="font-bold mb-1">{sellerDetails.name}</p>
-        <p class="text-xs leading-relaxed">
-          {sellerDetails.address_line1}<br />
-          {#if sellerDetails.address_line2}
-            {sellerDetails.address_line2}<br />
-          {/if}
-          {sellerDetails.city}<br />
-          GSTIN/UIN: {sellerDetails.gstin}<br />
-          State Name: {sellerDetails.state}
-        </p>
-      </div>
       <div class="border border-gray-300 p-3 h-full">
         <p class="font-semibold mb-2">Bill to</p>
-        <p class="font-bold">{invoiceData.invoice.name}</p>
+        <p class="font-bold mb-1">{invoiceData.invoice.name}</p>
         <p class="text-xs leading-relaxed">
-          {invoiceData.invoice.address_line1}<br />
-          {#if invoiceData.invoice.address_line2}
-            {invoiceData.invoice.address_line2}<br />
-          {/if}
-          {invoiceData.invoice.city}<br />
+          {invoiceData.invoice.address}<br />
+          {invoiceData.invoice.city} - {invoiceData.invoice.postal_code}<br />
           GSTIN/UIN: {invoiceData.invoice.gstin}<br />
           State Name: {invoiceData.invoice.state}
+        </p>
+      </div>
+      <div class="border border-gray-300 p-3">
+        <p class="font-semibold mb-2">Ship To</p>
+        <p class="font-bold mb-1">{invoiceData.invoice.ship_to_name}</p>
+        <p class="text-xs leading-relaxed">
+          {invoiceData.invoice.ship_to_address}<br />
+          {invoiceData.invoice.ship_to_city} - {invoiceData.invoice.ship_to_postal_code}<br />
+          GSTIN/UIN: {invoiceData.invoice.gstin}<br />
+          State Name: {invoiceData.invoice.ship_to_state}
         </p>
       </div>
     </div>

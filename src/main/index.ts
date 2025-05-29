@@ -1,7 +1,8 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.png?asset'
+import iconPng from '../../resources/icon.png?asset'
+import iconIco from '../../resources/icon.ico?asset'
 import { dbUtils } from './db-utils'
 import { getGstCaptcha, fetchGstDetails } from './gst-fetch'
 import fs from 'fs'
@@ -12,7 +13,7 @@ function createWindow(): void {
     height: 800,
     show: false,
     autoHideMenuBar: true,
-    ...(process.platform === 'linux' ? { icon } : {}),
+    icon: process.platform === 'linux' ? iconPng : iconIco,
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false

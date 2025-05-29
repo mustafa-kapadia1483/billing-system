@@ -22,8 +22,8 @@
     id: null,
     name: '',
     gstin: '',
-    address_line1: '',
-    address_line2: '',
+    address: '',
+    postal_code: '',
     city: '',
     state: ''
   })
@@ -37,8 +37,8 @@
             id: null,
             name: '',
             gstin: '',
-            address_line1: '',
-            address_line2: '',
+            address: '',
+            postal_code: '',
             city: '',
             state: ''
           }
@@ -69,8 +69,8 @@
       id: null,
       name: '',
       gstin: '',
-      address_line1: '',
-      address_line2: '',
+      address: '',
+      postal_code: '',
       city: '',
       state: ''
     }
@@ -97,7 +97,7 @@
         formData = {
           ...formData,
           name: response.data.tradeName,
-          address_line1: response.data.address,
+          address: response.data.address,
           city: response.data.address.split(',').at(-3).trim(),
           state: response.data.address.split(',').at(-2).trim()
         }
@@ -184,26 +184,24 @@
         </div>
 
         <div class="group">
-          <label for="address_line1" class="block text-sm font-medium text-gray-700 mb-1"
-            >Address Line 1</label
-          >
+          <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Address</label>
           <input
             type="text"
-            id="address_line1"
-            bind:value={formData.address_line1}
+            id="address"
+            bind:value={formData.address}
             class="input w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
             required
           />
         </div>
 
         <div class="group">
-          <label for="address_line2" class="block text-sm font-medium text-gray-700 mb-1"
-            >Address Line 2 (Optional)</label
+          <label for="postal_code" class="block text-sm font-medium text-gray-700 mb-1"
+            >Postal Code</label
           >
           <input
             type="text"
-            id="address_line2"
-            bind:value={formData.address_line2}
+            id="postal_code"
+            bind:value={formData.postal_code}
             class="input w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
           />
         </div>

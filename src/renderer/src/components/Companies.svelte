@@ -74,11 +74,8 @@
               >{company.gstin}</td
             >
             <td class="px-6 py-4 text-sm text-gray-900">
-              {company.address_line1}
-              {#if company.address_line2}
-                <br />{company.address_line2}
-              {/if}
-              <br />{company.city}, {company.state}
+              {company.address}
+              <br />{company.city} - {company.postal_code}, {company.state}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm space-x-2">
               <Button variant="secondary" onclick={() => openModal(company)}>Edit</Button>

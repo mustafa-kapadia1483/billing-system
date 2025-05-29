@@ -12,8 +12,8 @@ db.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     gstin TEXT NOT NULL,
-    address_line1 TEXT NOT NULL,
-    address_line2 TEXT,
+    address TEXT NOT NULL,
+    postal_code TEXT,
     city TEXT NOT NULL,
     state TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -28,6 +28,11 @@ db.exec(`
     cgst_amount DECIMAL(10,2) NULL,
     sgst_amount DECIMAL(10,2) NULL,
     igst_amount DECIMAL(10,2) NULL,
+    ship_to_name TEXT NULL,
+    ship_to_address TEXT NULL,
+    ship_to_city TEXT NULL,
+    ship_to_postal_code TEXT NULL,
+    ship_to_state TEXT NULL,
     is_paid BOOLEAN NOT NULL DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (company_id) REFERENCES companies(id)
