@@ -226,9 +226,13 @@
   })
 </script>
 
+<svelte:head>
+  <title>{isEditMode ? 'Edit Invoice' : 'Create Invoice'}</title>
+</svelte:head>
+
 <div class="card bg-white shadow-lg rounded-lg p-8 border border-gray-100">
   <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg class="w-6 h-6 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path
         stroke-linecap="round"
         stroke-linejoin="round"

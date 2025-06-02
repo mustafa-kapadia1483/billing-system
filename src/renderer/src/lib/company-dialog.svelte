@@ -93,12 +93,14 @@
   async function handleCaptchaSubmit(): Promise<void> {
     try {
       const response = await window.api.fetchGstDetails(formData.gstin, captchaInput, captchaCookie)
+      console.log(response)
       if (response.code === 200 && response.data) {
         formData = {
           ...formData,
           name: response.data.tradeName,
           address: response.data.address,
           city: response.data.address.split(',').at(-3).trim(),
+          postal_code: response.data.address.split(',').at(-1).trim(),
           state: response.data.address.split(',').at(-2).trim()
         }
         showCaptchaModal = false
@@ -162,6 +164,7 @@
                 type="text"
                 id="gstin"
                 bind:value={formData.gstin}
+                onchange={() => (formData.gstin = formData.gstin.toUpperCase())}
                 class="input w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors font-mono uppercase pr-10"
                 required
               />

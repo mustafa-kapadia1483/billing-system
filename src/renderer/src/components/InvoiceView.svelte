@@ -23,10 +23,7 @@
   }
 
   async function downloadPDF(): Promise<void> {
-    const date = new Date(invoiceData.invoice.date).toISOString().split('T')[0]
-    const downloadPath = await window.api.downloadPdf(
-      `${invoiceTitle.toLowerCase().split(' ').join('_')}-${invoiceData.invoice.name}-${invoiceData.invoice.invoice_number}-${date}.pdf`
-    )
+    const downloadPath = await window.api.downloadPdf(pageTitle)
     toasts.success(`Invoice downloaded: ${downloadPath}`, 0)
   }
 
@@ -60,7 +57,17 @@
   )
 
   let invoiceTitle = $derived(performaInvoice ? 'Performa Invoice' : 'Tax Invoice')
+  let pageTitle = $derived.by(() => {
+    if (invoiceData) {
+      const date = new Date(invoiceData.invoice.date).toISOString().split('T')[0]
+      return `${invoiceTitle.toLowerCase().split(' ').join('_')}-${invoiceData.invoice.name}-${invoiceData.invoice.invoice_number}-${date}.pdf`
+    }
+  })
 </script>
+
+<svelte:head>
+  <title>{pageTitle}</title>
+</svelte:head>
 
 <div class="flex justify-between gap-4 mb-4 print:hidden max-w-[210mm] mx-auto">
   <ToggleButton
@@ -108,27 +115,28 @@
     id="invoice-content"
     class="bg-white p-8 print:p-0 print:shadow-none max-w-[210mm] mx-auto text-sm"
   >
-    <div class="flex justify-between items-start bg-white p-2 mb-4">
-      <div class="w-1/6 p-3">
+    <div class="bg-white p-2 mb-4 relative">
+      <div class="w-[100px] p-3 absolute left-0 top-1/2 -translate-y-1/2">
         <CompanyLogo />
       </div>
-      <div class="flex-1 text-left ml-4">
-        <p class="text-sm text-gray-600 leading-relaxed space-y-1">
-          <span class="font-medium text-gray-800 block text-base">{sellerDetails.name}</span>
-          <span class="font-medium text-gray-800 block text-base">{sellerDetails.address}</span>
-          <span class="font-medium text-gray-800 block text-base">
-            {sellerDetails.address2}
-          </span>
-          <span class="text-gray-700 inline-flex items-center justify-end gap-2 mt-2">
-            <span class="text-gray-500">GSTIN/UIN:</span>
-            <span class="font-medium text-gray-800">{sellerDetails.gstin}</span>
-          </span>
-          <span class="inline-block ml-6 pl-6 border-l border-gray-200">
-            <span class="text-gray-500">State:</span>
-            <span class="font-medium text-gray-800 ml-1">{sellerDetails.state}</span>
-          </span>
-        </p>
+      <div class="w-[100px] p-3 absolute right-0 top-1/2 -translate-y-1/2">
+        <CompanyLogo />
       </div>
+      <p class="text-sm text-gray-600 leading-relaxed space-y-1 text-center">
+        <span class="font-bold text-brand block text-3xl">{sellerDetails.name}</span>
+        <span class=" text-gray-800 block text-xs">{sellerDetails.address}</span>
+        <span class=" text-gray-800 block text-xs">
+          {sellerDetails.address2}
+        </span>
+        <span class="text-gray-700 inline-flex items-center justify-end gap-2 mt-2 text-xs">
+          <span class="text-gray-500">GSTIN/UIN:</span>
+          <span class="font-medium text-gray-800">{sellerDetails.gstin}</span>
+        </span>
+        <span class="inline-block ml-2 pl-2 border-l border-gray-200 text-xs">
+          <span class="text-gray-500">State:</span>
+          <span class="font-medium text-gray-800 ml-1">{sellerDetails.state}</span>
+        </span>
+      </p>
     </div>
     <div class="flex justify-between items-center mb-4 p-2 border border-gray-300">
       <h1 class="text-2xl font-bold text-gray-800">{invoiceTitle}</h1>

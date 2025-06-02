@@ -29,8 +29,9 @@
   }
 
   const buttonStyles = {
-    primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
-    secondary: 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 focus:ring-blue-500',
+    primary: 'bg-brand text-white hover:bg-brand-700 focus:ring-brand-500',
+    secondary:
+      'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 focus:ring-brand-500',
     danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500'
   }
 

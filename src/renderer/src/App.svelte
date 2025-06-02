@@ -6,6 +6,7 @@
   import InvoiceView from './components/InvoiceView.svelte'
   import { Toast } from '$lib/Toast'
   import Inventory from './components/Inventory.svelte'
+  import '@fontsource-variable/montserrat'
 
   // Define routes
   const routes: RouteConfig = [
@@ -67,12 +68,26 @@
   }
 </script>
 
+<svelte:head>
+  <title>Billing System</title>
+</svelte:head>
+
 <div class="min-h-screen bg-gray-100">
   <nav class="bg-white shadow-lg print:hidden">
     <div class="max-w-7xl mx-auto px-4">
       <div class="flex justify-between h-16">
         <div class="flex space-x-6 items-center">
-          <a href="/" class="text-xl font-bold text-gray-800 py-2">Billing System</a>
+          <a href="/" class="text-xl font-bold text-brand py-2">Billing System</a>
+          <a
+            use:route={options}
+            href="/invoices"
+            class="transition-all duration-200 ease-in-out px-3 py-2">Invoices</a
+          >
+          <a
+            use:route={options}
+            href="/create-invoice"
+            class="transition-all duration-200 ease-in-out px-3 py-2">Create Invoice</a
+          >
           <a
             use:route={options}
             href="/companies"
@@ -82,16 +97,6 @@
             use:route={options}
             href="/inventory"
             class="transition-all duration-200 ease-in-out px-3 py-2">Inventory</a
-          >
-          <a
-            use:route={options}
-            href="/create-invoice"
-            class="transition-all duration-200 ease-in-out px-3 py-2">Create Invoice</a
-          >
-          <a
-            use:route={options}
-            href="/invoices"
-            class="transition-all duration-200 ease-in-out px-3 py-2">Invoices</a
           >
         </div>
       </div>
