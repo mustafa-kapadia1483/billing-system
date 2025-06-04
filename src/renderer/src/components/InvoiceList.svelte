@@ -155,8 +155,11 @@
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
       <!-- Date Range -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">From Date</label>
+        <label for="from-date" class="block text-sm font-medium text-gray-700 mb-1">
+          From Date
+        </label>
         <input
+          id="from-date"
           type="date"
           bind:value={filters.fromDate}
           class="input rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -164,8 +167,9 @@
         />
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">To Date</label>
+        <label for="to-date" class="block text-sm font-medium text-gray-700 mb-1">To Date</label>
         <input
+          id="to-date"
           type="date"
           bind:value={filters.toDate}
           class="input rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -175,8 +179,11 @@
 
       <!-- Amount Range -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Min Amount</label>
+        <label for="min-amount" class="block text-sm font-medium text-gray-700 mb-1">
+          Min Amount
+        </label>
         <input
+          id="min-amount"
           type="number"
           bind:value={filters.minAmount}
           class="input rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -185,8 +192,11 @@
         />
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Max Amount</label>
+        <label for="max-amount" class="block text-sm font-medium text-gray-700 mb-1">
+          Max Amount
+        </label>
         <input
+          id="max-amount"
           type="number"
           bind:value={filters.maxAmount}
           class="input rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
@@ -241,7 +251,7 @@
                 : invoice.company_name}
             </td>
             <td class="px-6 py-4 whitespace-nowrap">{invoice.gstin}</td>
-            <td class="px-6 py-4 whitespace-nowrap">{formatter.format(invoice.total_amount)}</td>
+            <td class="px-6 py-4 whitespace-nowrap">{formatter.format(invoice.grand_total)}</td>
             <td class="px-6 py-4 whitespace-nowrap w-32">{invoice.is_paid ? 'Paid' : 'Unpaid'}</td>
             <td class="px-6 py-4 whitespace-nowrap space-x-2">
               <Button

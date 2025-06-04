@@ -186,7 +186,8 @@ export const dbUtils = {
     } = {}
   ) => {
     let query = `
-      SELECT i.*, c.name as company_name, c.gstin
+      SELECT i.*, c.name as company_name, c.gstin,
+             (i.total_amount + COALESCE(i.cgst_amount, 0) + COALESCE(i.sgst_amount, 0) + COALESCE(i.igst_amount, 0)) as grand_total
       FROM invoices i
       JOIN companies c ON i.company_id = c.id
       WHERE 1=1
@@ -215,12 +216,14 @@ export const dbUtils = {
     }
 
     if (options.minAmount !== undefined) {
-      query += ' AND i.total_amount >= ?'
+      query +=
+        ' AND (i.total_amount + COALESCE(i.cgst_amount, 0) + COALESCE(i.sgst_amount, 0) + COALESCE(i.igst_amount, 0)) >= ?'
       params.push(options.minAmount)
     }
 
     if (options.maxAmount !== undefined) {
-      query += ' AND i.total_amount <= ?'
+      query +=
+        ' AND (i.total_amount + COALESCE(i.cgst_amount, 0) + COALESCE(i.sgst_amount, 0) + COALESCE(i.igst_amount, 0)) <= ?'
       params.push(options.maxAmount)
     }
 
@@ -230,14 +233,16 @@ export const dbUtils = {
     }
 
     // Sorting
-    const validSortColumns = ['date', 'invoice_number', 'total_amount', 'company_name', 'is_paid']
+    const validSortColumns = ['date', 'invoice_number', 'grand_total', 'company_name', 'is_paid']
     const sortBy = validSortColumns.includes(options.sortBy || '') ? options.sortBy : 'date'
 
     const sortOrder = options.sortOrder === 'asc' ? 'ASC' : 'DESC'
 
-    // Handle special case for company_name which is from the joined table
+    // Handle special cases for sorting
     if (sortBy === 'company_name') {
       query += ` ORDER BY c.name ${sortOrder}`
+    } else if (sortBy === 'grand_total') {
+      query += ` ORDER BY grand_total ${sortOrder}`
     } else {
       query += ` ORDER BY i.${sortBy} ${sortOrder}`
     }
