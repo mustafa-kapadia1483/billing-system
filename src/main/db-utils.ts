@@ -35,9 +35,60 @@ export const dbUtils = {
     })()
   },
 
-  getCompanies: () => {
-    const stmt = db.prepare('SELECT * FROM companies ORDER BY name')
-    return stmt.all()
+  getCompanies: (
+    options: {
+      name?: string
+      gstin?: string
+      state?: string
+      city?: string
+      sortBy?: 'name' | 'gstin' | 'state' | 'city'
+      sortOrder?: 'asc' | 'desc'
+      limit?: number
+      offset?: number
+    } = {}
+  ) => {
+    let query = 'SELECT * FROM companies WHERE 1=1'
+    const params: any[] = []
+
+    if (options.name) {
+      query += ' AND name LIKE ?'
+      params.push(`%${options.name}%`)
+    }
+
+    if (options.gstin) {
+      query += ' AND gstin LIKE ?'
+      params.push(`%${options.gstin}%`)
+    }
+
+    if (options.state) {
+      query += ' AND state LIKE ?'
+      params.push(`%${options.state}%`)
+    }
+
+    if (options.city) {
+      query += ' AND city LIKE ?'
+      params.push(`%${options.city}%`)
+    }
+
+    // Sorting
+    const validSortColumns = ['name', 'gstin', 'state', 'city']
+    const sortBy = validSortColumns.includes(options.sortBy || '') ? options.sortBy : 'name'
+    const sortOrder = options.sortOrder === 'desc' ? 'DESC' : 'ASC'
+    query += ` ORDER BY ${sortBy} ${sortOrder}`
+
+    // Pagination
+    if (options.limit !== undefined) {
+      query += ' LIMIT ?'
+      params.push(options.limit)
+
+      if (options.offset !== undefined) {
+        query += ' OFFSET ?'
+        params.push(options.offset)
+      }
+    }
+
+    const stmt = db.prepare(query)
+    return stmt.all(...params)
   },
 
   createInvoice: (invoice: any) => {

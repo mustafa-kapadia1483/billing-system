@@ -5,7 +5,7 @@ declare global {
     electron: ElectronAPI
     api: {
       createCompany: (company: any) => Promise<number>
-      getCompanies: () => Promise<any[]>
+      getCompanies: (options: any) => Promise<any[]>
       editCompany: (companyId, company) => Promise<any[]>
       deleteCompany: (companyId: number) => Promise<number>
       createInvoice: (invoice: any) => Promise<number>

@@ -48,8 +48,8 @@ app.whenReady().then(() => {
     return dbUtils.createCompany(company)
   })
 
-  ipcMain.handle('get-companies', () => {
-    return dbUtils.getCompanies()
+  ipcMain.handle('get-companies', (_, options) => {
+    return dbUtils.getCompanies(options)
   })
 
   ipcMain.handle('edit-company', (_, companyId, company) => {

@@ -1,20 +1,30 @@
 <script lang="ts">
-  interface StateSelectProps {
+  import type { HTMLAttributes } from 'svelte/elements'
+
+  interface StateSelectProps extends HTMLAttributes<HTMLSelectElement> {
     value: string
     required: boolean
     disabled?: boolean
     id: string
   }
 
-  let { value = $bindable(), required, id, disabled = false }: StateSelectProps = $props()
+  let {
+    value = $bindable(),
+    required,
+    id,
+    disabled = false,
+    class: className,
+    ...rest
+  }: StateSelectProps = $props()
 </script>
 
 <select
   {id}
   bind:value
-  class="input w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors appearance-none"
+  class={`input w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors appearance-none ${className}`}
   {required}
   {disabled}
+  {...rest}
 >
   <option value="" class="text-gray-500">Select a state</option>
   <option value="Andhra Pradesh">Andhra Pradesh</option>
