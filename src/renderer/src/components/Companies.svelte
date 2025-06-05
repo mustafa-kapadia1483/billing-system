@@ -4,6 +4,7 @@
   import CompanyDialog from '$lib/company-dialog.svelte'
   import Button from '$lib/Button.svelte'
   import StateSelect from '$lib/state-select.svelte'
+  import { Edit, Trashcan, Plus } from '$lib/icons'
 
   function debounce<T extends (...args: any[]) => any>(
     func: T,
@@ -124,14 +125,7 @@
         </button>
       </div>
       <Button variant="primary" onclick={() => openModal()} class="flex items-center gap-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-          />
-        </svg>
+        <Plus />
         Add Company
       </Button>
     </div>
@@ -259,9 +253,21 @@
                 <br />{company.city} - {company.postal_code}, {company.state}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm space-x-2">
-                <Button variant="secondary" onclick={() => openModal(company)}>Edit</Button>
-                <Button variant="danger" onclick={() => deleteCompany(company.id, company.name)}>
-                  Delete
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onclick={() => openModal(company)}
+                  title="Edit"
+                >
+                  <Edit />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="danger"
+                  onclick={() => deleteCompany(company.id, company.name)}
+                  title="Delete"
+                >
+                  <Trashcan />
                 </Button>
               </td>
             </tr>

@@ -3,6 +3,7 @@
   import { toasts } from '$lib/Toast'
   import { formatter } from '$lib/utils/formatting'
   import Button from '$lib/Button.svelte'
+  import { Edit, Trashcan, Plus } from '$lib/icons'
 
   let inventory = $state([])
   let isModalOpen = $state(false)
@@ -71,14 +72,7 @@
     <h2 class="text-2xl font-semibold text-gray-800">Inventory Management</h2>
 
     <Button class="flex items-center gap-2" onclick={() => openModal()}>
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-        />
-      </svg>
+      <Plus />
       Add Item
     </Button>
   </div>
@@ -219,9 +213,10 @@
             <td class="px-6 py-4 whitespace-nowrap">{formatter.format(item.rate)}</td>
             <td class="px-6 py-4 whitespace-nowrap">{item.tax_rate}%</td>
             <td class="px-6 py-4 whitespace-nowrap space-x-2">
-              <Button variant="secondary" size="sm" onclick={() => openModal(item)}>Edit</Button>
+              <Button variant="secondary" size="sm" onclick={() => openModal(item)}><Edit /></Button
+              >
               <Button variant="danger" size="sm" onclick={() => deleteItem(item.id, item.name)}>
-                Delete
+                <Trashcan />
               </Button>
             </td>
           </tr>

@@ -2,6 +2,7 @@
   import StateSelect from './state-select.svelte'
   import { toasts } from '$lib/Toast'
   import Button from '$lib/Button.svelte'
+  import { MagnifyGlass, Cross } from '$lib/icons'
 
   interface Props {
     isOpen: boolean
@@ -132,14 +133,7 @@
           {isEditMode ? 'Edit' : 'Add New'} Company
         </h3>
         <button class="text-gray-400 hover:text-gray-500 focus:outline-none" onclick={closeModal}>
-          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          <Cross />
         </button>
       </div>
 
@@ -173,14 +167,7 @@
                 class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 onclick={handleFetchGst}
               >
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
+                <MagnifyGlass />
               </button>
             </div>
           </div>
@@ -245,14 +232,7 @@
       <div class="flex justify-between items-center mb-4">
         <h3 class="text-lg font-semibold">Enter Captcha</h3>
         <button class="text-gray-400 hover:text-gray-500" onclick={closeCaptchaModal}>
-          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          <Cross />
         </button>
       </div>
       <div class="space-y-4">

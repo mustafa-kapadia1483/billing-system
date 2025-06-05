@@ -8,6 +8,7 @@
   import Button from '$lib/Button.svelte'
   import CompanyDialog from '$lib/company-dialog.svelte'
   import ToggleButton from '$lib/toggle-button.svelte'
+  import { Trashcan, Plus, Check, Document } from '$lib/icons'
 
   let showCompanyDialog = $state(false)
   let companies = $state([])
@@ -232,14 +233,7 @@
 
 <div class="card bg-white shadow-lg rounded-lg p-8 border border-gray-100">
   <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-    <svg class="w-6 h-6 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-      />
-    </svg>
+    <Document />
     {isEditMode ? 'Edit Invoice' : 'Create New Invoice'}
   </h2>
   <form onsubmit={handleSubmit} class="space-y-6">
@@ -291,14 +285,7 @@
               class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
               onclick={() => (showCompanyDialog = true)}
             >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
+              <Plus />
             </button>
           </div>
         </div>
@@ -390,14 +377,7 @@
         <h3 class="text-lg font-semibold text-gray-800">Items</h3>
 
         <Button class="flex items-center gap-2" type="button" variant="secondary" onclick={addItem}>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 4v16m8-8H4"
-            />
-          </svg>
+          <Plus />
           Add Item
         </Button>
       </div>
@@ -424,7 +404,7 @@
               <div
                 class="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto"
               >
-                {#each searchResults as result}
+                {#each searchResults as result (result.id)}
                   <button
                     type="button"
                     class="w-full text-left px-4 py-2 hover:bg-gray-50 focus:bg-gray-50 focus:outline-none transition-colors"
@@ -538,10 +518,10 @@
               readonly
             />
           </div>
-          <div class="md:col-span-1 flex justify-end items-center">
+          <div class="md:col-span-1 flex items-center">
             {#if items.length > 1}
               <Button type="button" variant="danger" size="sm" onclick={() => removeItem(i)}>
-                Remove
+                <Trashcan />
               </Button>
             {/if}
           </div>
@@ -581,14 +561,7 @@
 
     <div class="flex justify-end pt-4">
       <Button type="submit" class="flex items-center gap-2">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M5 13l4 4L19 7"
-          />
-        </svg>
+        <Check />
         {isEditMode ? 'Update Invoice' : 'Create Invoice'}
       </Button>
     </div>
