@@ -2,12 +2,13 @@
   import type { HTMLAttributes } from 'svelte/elements'
 
   interface ButtonProps extends HTMLAttributes<HTMLButtonElement | HTMLAnchorElement> {
-    variant: 'primary' | 'secondary' | 'danger'
-    type: 'button' | 'submit' | 'reset'
-    disabled: boolean
-    fullWidth: boolean
-    size: 'sm' | 'md' | 'lg'
-    asAnchorTag: boolean
+    variant?: 'primary' | 'secondary' | 'danger'
+    type?: 'button' | 'submit' | 'reset'
+    disabled?: boolean
+    fullWidth?: boolean
+    size?: 'sm' | 'md' | 'lg'
+    asAnchorTag?: boolean
+    href?: string
   }
 
   let {

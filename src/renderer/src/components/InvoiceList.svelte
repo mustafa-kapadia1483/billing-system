@@ -82,7 +82,7 @@
 <div class="bg-white shadow-lg rounded-xl p-6">
   <div class="flex justify-between items-center mb-6">
     <h2 class="text-2xl font-semibold">Invoices</h2>
-    <Button href="/create-invoice" class="flex items-center gap-2" asAnchorTag={true}>
+    <Button href="/create-invoice" class="flex items-center gap-2">
       <Plus />
       Create New Invoice
     </Button>
@@ -92,8 +92,11 @@
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
       <!-- Invoice Number Filter -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Invoice Number</label>
+        <label for="invoice-number" class="block text-sm font-medium text-gray-700 mb-1">
+          Invoice Number
+        </label>
         <input
+          id="invoice-number"
           type="text"
           bind:value={filters.invoiceNumber}
           class="input rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500"
@@ -104,8 +107,9 @@
 
       <!-- Company Filter -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Company</label>
+        <label for="company" class="block text-sm font-medium text-gray-700 mb-1">Company</label>
         <select
+          id="company"
           bind:value={filters.companyId}
           class="input rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500"
           onchange={() => loadInvoices()}
@@ -119,8 +123,11 @@
 
       <!-- Payment Status Filter -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Payment Status</label>
+        <label for="payment-status" class="block text-sm font-medium text-gray-700 mb-1"
+          >Payment Status</label
+        >
         <select
+          id="payment-status"
           bind:value={filters.isPaid}
           class="input rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500"
           onchange={() => loadInvoices()}
@@ -133,9 +140,10 @@
 
       <!-- Sort Options -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Sort By</label>
+        <label for="sort-by" class="block text-sm font-medium text-gray-700 mb-1">Sort By</label>
         <div class="flex gap-2">
           <select
+            id="sort-by"
             bind:value={filters.sortBy}
             class="input w-2/3 rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500"
             onchange={() => loadInvoices()}

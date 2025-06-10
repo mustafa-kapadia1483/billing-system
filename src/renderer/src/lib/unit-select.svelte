@@ -46,7 +46,7 @@
     { value: 'OTH', label: 'OTHERS' }
   ]
 
-  let { value = 'PCS', required = false, id = '', disabled = false } = $props()
+  let { value = $bindable('PCS'), required = false, id = '', disabled = false } = $props()
 </script>
 
 <select

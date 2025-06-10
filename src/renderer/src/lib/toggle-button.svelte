@@ -74,14 +74,17 @@
       checked = !checked
     }
   }
+
+  const buttonId = `toggle-btn-${label.replace(/\s+/g, '-')}-${labelPosition}`.toLowerCase()
 </script>
 
 <div class="flex items-center justify-start gap-2">
   {#if label && labelPosition === 'left'}
-    <label class={labelClasses}>{label}</label>
+    <label for={buttonId} class={labelClasses}>{label}</label>
   {/if}
 
   <button
+    id={buttonId}
     type="button"
     class={buttonClasses}
     role="switch"
@@ -91,10 +94,10 @@
     onclick={toggle}
     {...rest}
   >
-    <span aria-hidden="true" class={circleClasses} />
+    <span aria-hidden="true" class={circleClasses}></span>
   </button>
 
   {#if label && labelPosition === 'right'}
-    <label class={labelClasses}>{label}</label>
+    <label for={buttonId} class={labelClasses}>{label}</label>
   {/if}
 </div>

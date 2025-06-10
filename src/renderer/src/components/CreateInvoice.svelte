@@ -14,7 +14,6 @@
   const { push } = useNavigate()
 
   const queryParams = $derived(location.query)
-  $inspect(queryParams)
 
   let showCompanyDialog = $state(false)
   let companies = $state([])
@@ -46,7 +45,7 @@
 
   let { id: invoiceId = undefined, edit: isEditMode = false } = $derived.by(() => {
     return {
-      id: parseInt(queryParams.id) || undefined,
+      id: parseInt(queryParams.id as string) || undefined,
       edit: queryParams.edit === 'true'
     }
   })
@@ -176,7 +175,7 @@
   let showDropdown = $state(false)
   let searchTimeout
 
-  async function searchInventory(query: string, index: number): Promise<void> {
+  async function searchInventory(query: string): Promise<void> {
     clearTimeout(searchTimeout)
     searchTimeout = setTimeout(async () => {
       if (query.length < 2) {
@@ -399,7 +398,7 @@
               id="name-${i}"
               type="text"
               bind:value={item.description}
-              oninput={(e) => searchInventory(e.target.value, i)}
+              oninput={() => searchInventory(item.description as string)}
               onblur={() => setTimeout(() => (showDropdown = false), 200)}
               class="input w-full px-2 py-1.5 text-sm bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
               required
