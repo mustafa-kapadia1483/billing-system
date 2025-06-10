@@ -37,7 +37,7 @@
   const options: RouterOptions<RouteNames> = {
     routes,
     active: {
-      class: ['active', 'font-medium', 'shadow-sm']
+      class: ['active', 'font-medium', 'shadow-xs']
     }
   }
 </script>
@@ -55,7 +55,7 @@
             <a href="/" class="text-xl font-bold text-brand py-2" use:link>Billing System</a>
             <a
               href={`/${RouteName.Invoices}`}
-              class="transition-all duration-200 ease-in-out px-3 py-2 data-[active]:font-bold"
+              class="transition-all duration-200 ease-in-out px-3 py-2 data-active:font-bold"
               use:link
               use:active
             >
@@ -63,7 +63,7 @@
             </a>
             <a
               href={`/${RouteName.CreateInvoice}?id=null&edit=false`}
-              class="transition-all duration-200 ease-in-out px-3 py-2 data-[active]:font-bold"
+              class="transition-all duration-200 ease-in-out px-3 py-2 data-active:font-bold"
               use:link
               use:active={{ name: RouteName.CreateInvoice }}
             >
@@ -71,7 +71,7 @@
             </a>
             <a
               href={`/${RouteName.Companies}`}
-              class="transition-all duration-200 ease-in-out px-3 py-2 data-[active]:font-bold"
+              class="transition-all duration-200 ease-in-out px-3 py-2 data-active:font-bold"
               use:link
               use:active
             >
@@ -79,7 +79,7 @@
             </a>
             <a
               href={`/${RouteName.Inventory}`}
-              class="transition-all duration-200 ease-in-out px-3 py-2 data-[active]:font-bold"
+              class="transition-all duration-200 ease-in-out px-3 py-2 data-active:font-bold"
               use:link
               use:active
             >

@@ -86,7 +86,7 @@
           id="name"
           type="text"
           bind:value={filters.name}
-          class="input rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          class="input rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500"
           placeholder="Search by name"
           oninput={() => loadInventory()}
         />
@@ -99,7 +99,7 @@
           id="hsn"
           type="text"
           bind:value={filters.hsn_code}
-          class="input rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          class="input rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500"
           placeholder="Search by HSN code"
           oninput={() => loadInventory()}
         />
@@ -112,7 +112,7 @@
           id="minRate"
           type="number"
           bind:value={filters.minRate}
-          class="input rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          class="input rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500"
           placeholder="Min rate"
           onchange={() => loadInventory()}
         />
@@ -123,7 +123,7 @@
           id="maxRate"
           type="number"
           bind:value={filters.maxRate}
-          class="input rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          class="input rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500"
           placeholder="Max rate"
           onchange={() => loadInventory()}
         />
@@ -137,7 +137,7 @@
         <select
           id="tax_rate"
           bind:value={filters.tax_rate}
-          class="input rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          class="input rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500"
           onchange={() => loadInventory()}
         >
           <option value={undefined}>All</option>
@@ -155,7 +155,7 @@
           <select
             id="sortBy"
             bind:value={filters.sortBy}
-            class="input w-2/3 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            class="input w-2/3 rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500"
             onchange={() => loadInventory()}
           >
             <option value="name">Name</option>
@@ -165,7 +165,7 @@
           </select>
           <select
             bind:value={filters.sortOrder}
-            class="input w-1/3 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            class="input w-1/3 rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500"
             onchange={() => loadInventory()}
           >
             <option value="asc">ASC</option>
@@ -229,7 +229,7 @@
 {#if isModalOpen}
   <div
     aria-label="Close modal"
-    class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50"
+    class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-xs flex items-center justify-center z-50"
     onclick={(e) => {
       if (e.target === e.currentTarget) isModalOpen = false
     }}

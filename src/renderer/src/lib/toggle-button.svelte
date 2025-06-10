@@ -42,7 +42,7 @@
   let buttonClasses = $derived(
     [
       'relative inline-flex shrink-0 cursor-pointer rounded-full border-2 border-transparent',
-      'transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2',
+      'transition-colors duration-200 ease-in-out focus:outline-hidden focus:ring-2',
       'focus:ring-brand focus:ring-offset-2',
       checked ? 'bg-brand' : 'bg-gray-200',
       disabled ? 'opacity-50 cursor-not-allowed' : '',
@@ -54,7 +54,7 @@
 
   let circleClasses = $derived(
     [
-      'pointer-events-none inline-block transform rounded-full bg-white shadow',
+      'pointer-events-none inline-block transform rounded-full bg-white shadow-sm',
       'ring-0 transition duration-200 ease-in-out',
       checked ? sizeClasses[size].translate : 'translate-x-0',
       sizeClasses[size].circle

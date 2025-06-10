@@ -96,7 +96,7 @@
         <input
           type="text"
           bind:value={filters.invoiceNumber}
-          class="input rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          class="input rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500"
           placeholder="Search invoice number"
           oninput={() => loadInvoices()}
         />
@@ -107,7 +107,7 @@
         <label class="block text-sm font-medium text-gray-700 mb-1">Company</label>
         <select
           bind:value={filters.companyId}
-          class="input rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          class="input rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500"
           onchange={() => loadInvoices()}
         >
           <option value={undefined}>All Companies</option>
@@ -122,7 +122,7 @@
         <label class="block text-sm font-medium text-gray-700 mb-1">Payment Status</label>
         <select
           bind:value={filters.isPaid}
-          class="input rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          class="input rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500"
           onchange={() => loadInvoices()}
         >
           <option value={undefined}>All</option>
@@ -137,7 +137,7 @@
         <div class="flex gap-2">
           <select
             bind:value={filters.sortBy}
-            class="input w-2/3 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            class="input w-2/3 rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500"
             onchange={() => loadInvoices()}
           >
             <option value="date">Date</option>
@@ -148,7 +148,7 @@
           </select>
           <select
             bind:value={filters.sortOrder}
-            class="input w-1/3 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            class="input w-1/3 rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500"
             onchange={() => loadInvoices()}
           >
             <option value="desc">DESC</option>
@@ -168,7 +168,7 @@
           id="from-date"
           type="date"
           bind:value={filters.fromDate}
-          class="input rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          class="input rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500"
           onchange={() => loadInvoices()}
         />
       </div>
@@ -178,7 +178,7 @@
           id="to-date"
           type="date"
           bind:value={filters.toDate}
-          class="input rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          class="input rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500"
           onchange={() => loadInvoices()}
         />
       </div>
@@ -192,7 +192,7 @@
           id="min-amount"
           type="number"
           bind:value={filters.minAmount}
-          class="input rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          class="input rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500"
           placeholder="Min amount"
           onchange={() => loadInvoices()}
         />
@@ -205,7 +205,7 @@
           id="max-amount"
           type="number"
           bind:value={filters.maxAmount}
-          class="input rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          class="input rounded-md border-gray-300 shadow-xs focus:border-blue-500 focus:ring-blue-500"
           placeholder="Max amount"
           onchange={() => loadInvoices()}
         />

@@ -164,7 +164,7 @@
 
     <div class="w-full mb-4">
       <table
-        class="w-full border border-gray-300 border-collapse text-xs [&_*]:border [&_*]:border-gray-300"
+        class="w-full border border-gray-300 border-collapse text-xs **:border **:border-gray-300"
       >
         <thead>
           <tr>
@@ -261,7 +261,7 @@
     </div>
 
     <div class="w-full mb-4">
-      <table class="border w-full border-gray-300 text-xs [&_*]:border [&_*]:border-gray-300">
+      <table class="border w-full border-gray-300 text-xs **:border **:border-gray-300">
         <thead>
           <tr>
             <th class="p-1">HSN/SAC</th>

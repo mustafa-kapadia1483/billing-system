@@ -142,7 +142,7 @@
               id="name"
               bind:value={filters.name}
               oninput={handleFilterChange}
-              class="input w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500"
+              class="input w-full rounded-md border-gray-300 shadow-xs focus:border-brand-500 focus:ring-brand-500"
               placeholder="Search by name"
             />
           </div>
@@ -154,7 +154,7 @@
               id="gstin"
               bind:value={filters.gstin}
               oninput={handleFilterChange}
-              class="input w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500"
+              class="input w-full rounded-md border-gray-300 shadow-xs focus:border-brand-500 focus:ring-brand-500"
               placeholder="Search by GSTIN"
             />
           </div>
@@ -175,7 +175,7 @@
               id="city"
               bind:value={filters.city}
               oninput={handleFilterChange}
-              class="input w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500"
+              class="input w-full rounded-md border-gray-300 shadow-xs focus:border-brand-500 focus:ring-brand-500"
               placeholder="Filter by city"
             />
           </div>
@@ -189,7 +189,7 @@
                 id="sortBy"
                 bind:value={filters.sortBy}
                 onchange={handleFilterChange}
-                class="input w-max rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500"
+                class="input w-max rounded-md border-gray-300 shadow-xs focus:border-brand-500 focus:ring-brand-500"
               >
                 <option value="name">Name</option>
                 <option value="gstin">GSTIN</option>
@@ -204,7 +204,7 @@
                 id="sortOrder"
                 bind:value={filters.sortOrder}
                 onchange={handleFilterChange}
-                class="input rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500"
+                class="input rounded-md border-gray-300 shadow-xs focus:border-brand-500 focus:ring-brand-500"
               >
                 <option value="asc">ASC</option>
                 <option value="desc">DES</option>

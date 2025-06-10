@@ -412,7 +412,7 @@
                 {#each searchResults as result (result.id)}
                   <button
                     type="button"
-                    class="w-full text-left px-4 py-2 hover:bg-gray-50 focus:bg-gray-50 focus:outline-none transition-colors"
+                    class="w-full text-left px-4 py-2 hover:bg-gray-50 focus:bg-gray-50 focus:outline-hidden transition-colors"
                     onclick={() => selectInventoryItem(result, i)}
                   >
                     <div class="text-sm font-medium text-gray-800">{result.name}</div>

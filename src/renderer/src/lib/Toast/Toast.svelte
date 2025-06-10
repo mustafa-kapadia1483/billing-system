@@ -20,7 +20,7 @@
   const toastList = $derived(toasts.get())
 </script>
 
-<div class="print:hidden fixed top-4 right-4 z-[9999] flex flex-col gap-2">
+<div class="print:hidden fixed top-4 right-4 z-9999 flex flex-col gap-2">
   {#each toastList as toast (toast.id)}
     <div
       class={[
@@ -33,7 +33,7 @@
       <p class="flex-1 break-words">{toast.message}</p>
       <button
         aria-label="close-toast"
-        class="text-white/80 hover:text-white flex-shrink-0"
+        class="text-white/80 hover:text-white shrink-0"
         onclick={() => toasts.remove(toast.id)}
       >
         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
