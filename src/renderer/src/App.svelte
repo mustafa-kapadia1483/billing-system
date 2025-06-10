@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { RouterContext, RouterView, link, active, transition } from '@dvcol/svelte-simple-router'
+  import { RouterContext, RouterView, link, active } from '@dvcol/svelte-simple-router'
   import type { Route, RouterOptions } from '@dvcol/svelte-simple-router'
   import Companies from './components/Companies.svelte'
   import CreateInvoice from './components/CreateInvoice.svelte'
