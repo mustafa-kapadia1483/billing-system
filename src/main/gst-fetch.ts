@@ -72,8 +72,6 @@ function validGstCheckSum(gst_number: string): boolean {
   let factor = 2,
     sum = 0,
     checkCodePoint = 0,
-    i: number,
-    j: number,
     digit: number,
     mod: number,
     codePoint: number,

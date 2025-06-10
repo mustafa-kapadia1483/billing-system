@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { route, RouteOptions, Router, type RouteConfig } from '@mateothegreat/svelte5-router'
+  import { RouterContext, RouterView, link, active, transition } from '@dvcol/svelte-simple-router'
+  import type { Route, RouterOptions } from '@dvcol/svelte-simple-router'
   import Companies from './components/Companies.svelte'
   import CreateInvoice from './components/CreateInvoice.svelte'
   import InvoiceList from './components/InvoiceList.svelte'
@@ -7,64 +8,37 @@
   import { Toast } from '$lib/Toast'
   import Inventory from './components/Inventory.svelte'
   import '@fontsource-variable/montserrat'
+  import { fade } from 'svelte/transition'
 
-  // Define routes
-  const routes: RouteConfig = [
-    { path: '/', component: InvoiceList },
-    { path: '/companies', component: Companies },
-    { path: '/create-invoice', component: CreateInvoice },
-    { path: '/invoices', component: InvoiceList },
-    { path: '/inventory', component: Inventory },
-    { path: '/invoice/(?<id>.*)', component: InvoiceView }
+  const RouteName = {
+    Home: 'home',
+    Invoices: 'invoices',
+    CreateInvoice: 'create-invoice',
+    Companies: 'companies',
+    Inventory: 'inventory',
+    InvoiceView: 'invoice-view'
+  } as const
+
+  type RouteNames = (typeof RouteName)[keyof typeof RouteName]
+
+  const routes: Readonly<Route<RouteNames>[]> = [
+    { name: RouteName.Home, path: '/', redirect: { name: RouteName.Invoices } },
+    { name: RouteName.Invoices, path: `/${RouteName.Invoices}`, component: InvoiceList },
+    {
+      name: RouteName.CreateInvoice,
+      path: `/${RouteName.CreateInvoice}`,
+      component: CreateInvoice
+    },
+    { name: RouteName.Companies, path: '/companies', component: Companies },
+    { name: RouteName.Inventory, path: '/inventory', component: Inventory },
+    { name: RouteName.InvoiceView, path: '/invoice/:id', component: InvoiceView }
   ]
 
-  // Define route options with consistent sizing and padding
-  const options = new RouteOptions()
-  if (!options.active) {
-    options.active = {
-      class: ['active', 'font-medium']
+  const options: RouterOptions<RouteNames> = {
+    routes,
+    active: {
+      class: ['active', 'font-medium', 'shadow-sm']
     }
-  }
-  if (!options.default) {
-    options.default = {
-      class: [
-        'inactive',
-        'text-gray-600',
-        'hover:text-gray-900',
-        'border-transparent',
-        'hover:border-gray-300'
-      ]
-    }
-  }
-  if (!options.loading) {
-    options.loading = {
-      class: ['loading', 'bg-blue-100', 'text-blue-600', 'animate-pulse']
-    }
-  }
-  if (!options.disabled) {
-    options.disabled = {
-      class: ['disabled', 'bg-gray-100', 'text-gray-400', 'cursor-not-allowed']
-    }
-  }
-
-  if (!options.active.class) {
-    options.active.class = ['active', 'font-medium', 'shadow-sm']
-  }
-
-  if (!options.default.class) {
-    options.default.class = [
-      'inactive',
-      'text-gray-600',
-      'hover:text-gray-900',
-      'border-transparent',
-      'hover:border-gray-300'
-    ]
-  }
-  if (!options.loading.class) {
-    options.loading.class = ['loading', 'bg-blue-100', 'text-blue-600', 'animate-pulse']
-  }
-  if (!options.disabled.class) {
-    options.disabled.class = ['disabled', 'bg-gray-100', 'text-gray-400', 'cursor-not-allowed']
   }
 </script>
 
@@ -72,39 +46,53 @@
   <title>Billing System</title>
 </svelte:head>
 
-<div class="min-h-screen bg-gray-100">
-  <nav class="bg-white shadow-lg print:hidden">
-    <div class="max-w-7xl mx-auto px-4">
-      <div class="flex justify-between h-16">
-        <div class="flex space-x-6 items-center">
-          <a href="/" class="text-xl font-bold text-brand py-2">Billing System</a>
-          <a
-            use:route={options}
-            href="/invoices"
-            class="transition-all duration-200 ease-in-out px-3 py-2">Invoices</a
-          >
-          <a
-            use:route={options}
-            href="/create-invoice"
-            class="transition-all duration-200 ease-in-out px-3 py-2">Create Invoice</a
-          >
-          <a
-            use:route={options}
-            href="/companies"
-            class="transition-all duration-200 ease-in-out px-3 py-2">Companies</a
-          >
-          <a
-            use:route={options}
-            href="/inventory"
-            class="transition-all duration-200 ease-in-out px-3 py-2">Inventory</a
-          >
+<RouterContext {options}>
+  <div class="min-h-screen bg-gray-100">
+    <nav class="bg-white shadow-lg print:hidden">
+      <div class="max-w-7xl mx-auto px-4">
+        <div class="flex justify-between h-16">
+          <div class="flex space-x-6 items-center">
+            <a href="/" class="text-xl font-bold text-brand py-2" use:link>Billing System</a>
+            <a
+              href={`/${RouteName.Invoices}`}
+              class="transition-all duration-200 ease-in-out px-3 py-2 data-[active]:font-bold"
+              use:link
+              use:active
+            >
+              Invoices
+            </a>
+            <a
+              href={`/${RouteName.CreateInvoice}?id=null&edit=false`}
+              class="transition-all duration-200 ease-in-out px-3 py-2 data-[active]:font-bold"
+              use:link
+              use:active={{ name: RouteName.CreateInvoice }}
+            >
+              Create Invoice
+            </a>
+            <a
+              href={`/${RouteName.Companies}`}
+              class="transition-all duration-200 ease-in-out px-3 py-2 data-[active]:font-bold"
+              use:link
+              use:active
+            >
+              Companies
+            </a>
+            <a
+              href={`/${RouteName.Inventory}`}
+              class="transition-all duration-200 ease-in-out px-3 py-2 data-[active]:font-bold"
+              use:link
+              use:active
+            >
+              Inventory
+            </a>
+          </div>
         </div>
       </div>
-    </div>
-  </nav>
+    </nav>
 
-  <main class="max-w-7xl mx-auto py-6 px-4">
-    <Router {routes} />
-  </main>
-  <Toast />
-</div>
+    <main class="max-w-7xl mx-auto py-6 px-4">
+      <RouterView transition={{ in: fade }} />
+    </main>
+    <Toast />
+  </div>
+</RouterContext>

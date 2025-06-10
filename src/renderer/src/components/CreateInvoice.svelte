@@ -2,13 +2,19 @@
   import { onMount } from 'svelte'
   import { formatter } from '$lib/utils/formatting'
   import sellerDetails from '../config/seller.json'
-  import { goto } from '@mateothegreat/svelte5-router'
   import { toasts } from '$lib/Toast'
   import UnitSelect from '$lib/unit-select.svelte'
   import Button from '$lib/Button.svelte'
   import CompanyDialog from '$lib/company-dialog.svelte'
   import ToggleButton from '$lib/toggle-button.svelte'
   import { Trashcan, Plus, Check, Document } from '$lib/icons'
+  import { useRoute, useNavigate } from '@dvcol/svelte-simple-router'
+
+  const { location } = $derived(useRoute())
+  const { push } = useNavigate()
+
+  const queryParams = $derived(location.query)
+  $inspect(queryParams)
 
   let showCompanyDialog = $state(false)
   let companies = $state([])
@@ -38,12 +44,11 @@
   let shipToPostalCode = $state('')
   let shipToState = $state('')
 
-  let props = $props()
   let { id: invoiceId = undefined, edit: isEditMode = false } = $derived.by(() => {
-    if (props.route.result.querystring) {
-      return props.route.result.querystring.params
+    return {
+      id: parseInt(queryParams.id) || undefined,
+      edit: queryParams.edit === 'true'
     }
-    return {}
   })
 
   let totalAmount = $derived(items.reduce((sum, item) => sum + item.amount, 0))
@@ -160,7 +165,7 @@
         await window.api.createInvoice(invoice)
         toasts.success(`Invoice No. ${invoiceNumber} created successfully`)
       }
-      goto('/invoices')
+      push({ path: '/invoices' })
     } catch (error) {
       console.error('Failed to create invoice:', error)
       toasts.error(`Failed to ${isEditMode ? 'update' : 'create'} invoice`)

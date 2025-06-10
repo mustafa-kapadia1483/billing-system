@@ -8,15 +8,21 @@
   import ToggleButton from '$lib/toggle-button.svelte'
   import CompanyLogo from '$lib/company-logo.svelte'
   import { Printer, Download } from '$lib/icons'
+  import { useRoute } from '@dvcol/svelte-simple-router'
 
-  let { route } = $props()
   let invoiceData = $state(null)
   let performaInvoice = $state(false)
 
+  const { route, location, routing } = $derived(useRoute())
+
+  const reactiveRoute = $derived(route)
+  const reactiveLocation = $derived(location)
+  const reactiveRoutingState = $derived(routing)
+
+  const pathParams = $derived(location.params)
+
   onMount(async () => {
-    if (route.result.path.params.id) {
-      invoiceData = await window.api.getInvoiceDetails(parseInt(route.result.path.params.id))
-    }
+    invoiceData = await window.api.getInvoiceDetails(parseInt(pathParams.id))
   })
 
   function printInvoice(): void {

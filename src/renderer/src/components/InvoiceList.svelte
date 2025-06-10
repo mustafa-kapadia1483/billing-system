@@ -1,10 +1,12 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { goto } from '@mateothegreat/svelte5-router'
+  import { useNavigate } from '@dvcol/svelte-simple-router'
   import { formatter } from '$lib/utils/formatting'
   import { toasts } from '$lib/Toast'
   import Button from '$lib/Button.svelte'
   import { Edit, Trashcan, CheckCircled, CrossCircled, Plus, EyeCircled } from '$lib/icons'
+
+  const { push } = useNavigate()
 
   let invoices = $state([])
   let companies = $state([])
@@ -34,11 +36,11 @@
   }
 
   function viewInvoice(id: number): void {
-    goto(`/invoice/${id}`)
+    push({ path: `/invoice/:id`, params: { id } })
   }
 
   function editInvoice(id: number): void {
-    goto(`/create-invoice`, { id, edit: true })
+    push({ path: `/create-invoice`, query: { id, edit: true } })
   }
 
   async function deleteInvoice(id: number, invoice_number: string): Promise<void> {

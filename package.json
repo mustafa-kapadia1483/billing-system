@@ -21,10 +21,10 @@
     "build:linux": "npm run build && electron-builder --linux"
   },
   "dependencies": {
+    "@dvcol/svelte-simple-router": "^2.7.2",
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^4.0.0",
     "@fontsource-variable/montserrat": "^5.2.5",
-    "@mateothegreat/svelte5-router": "^2.14.1",
     "better-sqlite3": "^11.10.0",
     "electron-updater": "^6.3.9",
     "to-words": "^4.5.0",
