@@ -82,7 +82,7 @@
 <div class="bg-white shadow-lg rounded-xl p-6">
   <div class="flex justify-between items-center mb-6">
     <h2 class="text-2xl font-semibold">Invoices</h2>
-    <Button href="/create-invoice" class="flex items-center gap-2">
+    <Button asAnchorTag href="/create-invoice?id=null&edit=false" class="flex items-center gap-2">
       <Plus />
       Create New Invoice
     </Button>

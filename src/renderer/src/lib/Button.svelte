@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { link } from '@dvcol/svelte-simple-router'
   import type { HTMLAttributes } from 'svelte/elements'
 
   interface ButtonProps extends HTMLAttributes<HTMLButtonElement | HTMLAnchorElement> {
@@ -50,7 +51,7 @@
 </script>
 
 {#if asAnchorTag}
-  <a {type} class={classes} {...restProps}>
+  <a use:link {type} class={classes} {...restProps}>
     {@render children()}
   </a>
 {:else}
