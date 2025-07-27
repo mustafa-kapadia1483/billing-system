@@ -3,10 +3,11 @@
   import { toasts } from '$lib/Toast'
   import Button from '$lib/Button.svelte'
   import { MagnifyGlass, Cross } from '$lib/icons'
+  import type { Company } from '../../../shared/types'
 
   interface Props {
     isOpen: boolean
-    company: null | object
+    company: null | Company
     onClose: () => void
     onSuccess: (companyId: null | number) => void
   }
@@ -19,7 +20,7 @@
   let captchaCookie = $state('')
   let captchaInput = $state('')
 
-  let formData = $state({
+  let formData: Company = $state({
     id: null,
     name: '',
     gstin: '',

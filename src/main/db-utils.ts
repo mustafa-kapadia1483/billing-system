@@ -1,7 +1,8 @@
 import { db } from './database'
+import type { Company, CompanyFilters, Invoice, InvoiceFilters } from '../shared/types.d.ts'
 
 export const dbUtils = {
-  createCompany: (company: any) => {
+  createCompany: (company: Company): number | bigint => {
     const stmt = db.prepare(
       'INSERT INTO companies (name, gstin, address, postal_code, city, state) VALUES (?, ?, ?, ?, ?, ?)'
     )
@@ -16,7 +17,7 @@ export const dbUtils = {
     return result.lastInsertRowid
   },
 
-  deleteCompany: (companyId: number) => {
+  deleteCompany: (companyId: Company['id']): boolean => {
     return db.transaction(() => {
       // Check if company has any invoices
       const hasInvoices = db
@@ -35,18 +36,7 @@ export const dbUtils = {
     })()
   },
 
-  getCompanies: (
-    options: {
-      name?: string
-      gstin?: string
-      state?: string
-      city?: string
-      sortBy?: 'name' | 'gstin' | 'state' | 'city'
-      sortOrder?: 'asc' | 'desc'
-      limit?: number
-      offset?: number
-    } = {}
-  ) => {
+  getCompanies: (options: CompanyFilters = {}): Company[] => {
     let query = 'SELECT * FROM companies WHERE 1=1'
     const params: any[] = []
 
@@ -88,10 +78,10 @@ export const dbUtils = {
     }
 
     const stmt = db.prepare(query)
-    return stmt.all(...params)
+    return stmt.all(...params) as Company[]
   },
 
-  createInvoice: (invoice: any) => {
+  createInvoice: (invoice: Invoice) => {
     const { companyId, items, ...invoiceData } = invoice
 
     const result = db.transaction(() => {
@@ -148,7 +138,7 @@ export const dbUtils = {
     return result
   },
 
-  updateInvoiceData: (invoiceId: number, invoice: any) => {
+  updateInvoiceData: (invoiceId: Invoice['id'], invoice: Invoice) => {
     const { companyId, items, ...invoiceData } = invoice
 
     const result = db.transaction(() => {
@@ -221,21 +211,7 @@ export const dbUtils = {
     return result
   },
 
-  getInvoices: (
-    options: {
-      companyId?: number
-      isPaid?: boolean
-      fromDate?: string
-      toDate?: string
-      minAmount?: number
-      maxAmount?: number
-      invoiceNumber?: string
-      sortBy?: string
-      sortOrder?: 'asc' | 'desc'
-      limit?: number
-      offset?: number
-    } = {}
-  ) => {
+  getInvoices: (options: InvoiceFilters = {}) => {
     let query = `
       SELECT i.*, c.name as company_name, c.gstin,
              (i.total_amount + COALESCE(i.cgst_amount, 0) + COALESCE(i.sgst_amount, 0) + COALESCE(i.igst_amount, 0)) as grand_total
@@ -313,7 +289,7 @@ export const dbUtils = {
     return stmt.all(...params)
   },
 
-  getInvoiceDetails: (invoiceId: number) => {
+  getInvoiceDetails: (invoiceId: Invoice['id']) => {
     const invoice = db
       .prepare(
         `
@@ -336,7 +312,7 @@ export const dbUtils = {
     return { invoice, items }
   },
 
-  deleteInvoice: (invoiceId: number) => {
+  deleteInvoice: (invoiceId: Invoice['id']) => {
     return db.transaction(() => {
       // Delete invoice items first due to foreign key constraint
       const deleteItemsStmt = db.prepare('DELETE FROM invoice_items WHERE invoice_id = ?')
@@ -349,7 +325,8 @@ export const dbUtils = {
       return result.changes > 0
     })()
   },
-  editCompany: (companyId: number, company: any) => {
+
+  editCompany: (companyId: Company['id'], company: Company) => {
     const stmt = db.prepare(`
       UPDATE companies 
       SET name = ?, gstin = ?, address = ?, postal_code = ?, city = ?, state = ?
@@ -367,7 +344,7 @@ export const dbUtils = {
     return result.changes > 0
   },
 
-  updateInvoicePaidStatus: (invoiceId: number, isPaid: boolean) => {
+  updateInvoicePaidStatus: (invoiceId: Invoice['id'], isPaid: Invoice['is_paid']) => {
     const stmt = db.prepare('UPDATE invoices SET is_paid = ? WHERE id = ?')
     const result = stmt.run(isPaid ? 1 : 0, invoiceId)
     return result.changes > 0

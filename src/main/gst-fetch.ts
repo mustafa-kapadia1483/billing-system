@@ -1,3 +1,5 @@
+import type { GstCaptchaResponse, GstDetailsResponse } from '../shared/types'
+
 const CONSTANTS = {
   GST_REGEX: /[0-9]{2}[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9A-Za-z]{1}[Zz1-9A-Ja-j]{1}[0-9a-zA-Z]{1}/,
   CAPTCHA_REGEX: /^([0-9]){6}$/,
@@ -12,14 +14,6 @@ enum HttpStatus {
   OK = 200,
   BAD_REQUEST = 400,
   INTERNAL_SERVER_ERROR = 500
-}
-
-interface GstCaptchaResponse {
-  code: number
-  data: {
-    captcha_image: string
-    captcha_cookie: string
-  }
 }
 
 export async function getGstCaptcha(): Promise<GstCaptchaResponse> {
@@ -100,21 +94,6 @@ function validGstCheckSum(gst_number: string): boolean {
 
 export const validGstNumber = (gst_number: string) => {
   return validGstCheckSum(gst_number)
-}
-
-export interface GstDetailsResponse {
-  code: number
-  data?: {
-    status: string
-    legalName: string
-    businessNature: string
-    address: string
-    companyType: string
-    tradeName: string
-  }
-  error?: string
-  error_description?: string
-  error_code?: string
 }
 
 export async function fetchGstDetails(

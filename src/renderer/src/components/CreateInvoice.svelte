@@ -9,6 +9,7 @@
   import ToggleButton from '$lib/toggle-button.svelte'
   import { Trashcan, Plus, Check, Document } from '$lib/icons'
   import { useRoute, useNavigate } from '@dvcol/svelte-simple-router'
+  import type { InvoiceItem } from 'src/shared/types'
 
   const { location } = $derived(useRoute())
   const { push } = useNavigate()
@@ -19,7 +20,7 @@
   let companies = $state([])
   let selectedCompany = $state(null)
   let selectedCompanyData = $state(null)
-  let items = $state([
+  let items: InvoiceItem[] = $state([
     {
       description: '',
       hsn_code: '',

@@ -6,6 +6,7 @@ import iconIco from '../../resources/icon.ico?asset'
 import { dbUtils } from './db-utils'
 import { getGstCaptcha, fetchGstDetails } from './gst-fetch'
 import fs from 'fs'
+import { Company, CompanyFilters, Invoice, InvoiceFilters } from '../shared/types'
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
@@ -44,43 +45,46 @@ app.whenReady().then(() => {
   })
 
   // Database operations
-  ipcMain.handle('create-company', async (_, company) => {
+  ipcMain.handle('create-company', async (_, company: Company) => {
     return dbUtils.createCompany(company)
   })
 
-  ipcMain.handle('get-companies', (_, options) => {
+  ipcMain.handle('get-companies', (_, options: CompanyFilters) => {
     return dbUtils.getCompanies(options)
   })
 
-  ipcMain.handle('edit-company', (_, companyId, company) => {
+  ipcMain.handle('edit-company', (_, companyId: Company['id'], company: Company) => {
     return dbUtils.editCompany(companyId, company)
   })
 
-  ipcMain.handle('delete-company', (_, companyId) => {
+  ipcMain.handle('delete-company', (_, companyId: Company['id']) => {
     return dbUtils.deleteCompany(companyId)
   })
 
-  ipcMain.handle('create-invoice', async (_, invoice) => {
+  ipcMain.handle('create-invoice', async (_, invoice: Invoice) => {
     return dbUtils.createInvoice(invoice)
   })
 
-  ipcMain.handle('update-invoice-data', async (_, invoiceId, invoice) => {
+  ipcMain.handle('update-invoice-data', async (_, invoiceId: Invoice['id'], invoice: Invoice) => {
     return dbUtils.updateInvoiceData(invoiceId, invoice)
   })
 
-  ipcMain.handle('get-invoices', (_, options) => {
+  ipcMain.handle('get-invoices', (_, options: InvoiceFilters) => {
     return dbUtils.getInvoices(options)
   })
 
-  ipcMain.handle('get-invoice-details', (_, invoiceId) => {
+  ipcMain.handle('get-invoice-details', (_, invoiceId: Invoice['id']) => {
     return dbUtils.getInvoiceDetails(invoiceId)
   })
 
-  ipcMain.handle('update-invoice-paid-status', (_, invoiceId, isPaidStatus: boolean) => {
-    return dbUtils.updateInvoicePaidStatus(invoiceId, isPaidStatus)
-  })
+  ipcMain.handle(
+    'update-invoice-paid-status',
+    (_, invoiceId: Invoice['id'], isPaidStatus: Invoice['is_paid']) => {
+      return dbUtils.updateInvoicePaidStatus(invoiceId, isPaidStatus)
+    }
+  )
 
-  ipcMain.handle('delete-invoice', (_, invoiceId) => {
+  ipcMain.handle('delete-invoice', (_, invoiceId: Invoice['id']) => {
     return dbUtils.deleteInvoice(invoiceId)
   })
 
