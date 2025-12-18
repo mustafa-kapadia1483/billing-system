@@ -371,7 +371,7 @@
               <img src={upiQrCode.qr} class="max-w-40" alt="upi qr code scanner" />
             {/await}
           </div>
-          <div class="border border-r-0 border-gray-300 max-w-72 ml-auto p-1">
+          <div class="border border-r-0 border-b-0 border-gray-300 max-w-72 ml-auto p-1">
             <p class="font-semibold">for {sellerDetails.name}</p>
             <p class="mt-8">Authorised Signatory</p>
           </div>
